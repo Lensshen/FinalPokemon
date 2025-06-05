@@ -67,8 +67,6 @@ packages:
 
     version: "1.3.3"
 
-    version: "1.3.2"
-
   firebase_auth:
     dependency: "direct main"
     description:
