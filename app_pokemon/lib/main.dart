@@ -1,7 +1,7 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 import 'package:flutter/material.dart';
-import 'IniciarSecion.dart'; // Tu pantalla de login
+import 'IniciarSecion.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -17,7 +17,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Identificación Prueba',
       debugShowCheckedModeBanner: false,
-      home: const LoginScreen(), // Asegúrate de que esta pantalla exista
+      home: const LoginScreen(),
     );
   }
 }
