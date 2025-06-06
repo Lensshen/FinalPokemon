@@ -1,15 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
-class HomePage extends StatefulWidget {
-  const HomePage({Key? key}) : super(key: key);
+class Menu extends StatefulWidget {
+  const Menu({Key? key}) : super(key: key);
 
   @override
-  _HomePageState createState() => _HomePageState();
+  _MenuState createState() => _MenuState();
 }
 
-class _HomePageState extends State<HomePage>
-    with SingleTickerProviderStateMixin {
+class _MenuState extends State<Menu> with SingleTickerProviderStateMixin {
   late TabController _tabController;
   int _counter = 0;
   double _scale = 1.0;
@@ -245,7 +244,6 @@ class _HomePageState extends State<HomePage>
   }
 }
 
-// Widget personalizado
 class CustomCard extends StatelessWidget {
   final String title;
   final String description;
