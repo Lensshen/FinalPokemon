@@ -17,7 +17,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Auth Demo',
+      title: 'Coneccion de autenticacion con menu',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(primarySwatch: Colors.blue),
       home: StreamBuilder<User?>(
@@ -28,9 +28,9 @@ class MyApp extends StatelessWidget {
               body: Center(child: CircularProgressIndicator()),
             );
           } else if (snapshot.hasData) {
-            return const HomePage(); // Tu pantalla con Tabs
+            return const Menu();
           } else {
-            return const LoginScreen(); // Pantalla de login
+            return const LoginScreen();
           }
         },
       ),
