@@ -11,6 +11,7 @@ class Menu extends StatefulWidget {
 
 class _MenuState extends State<Menu> with SingleTickerProviderStateMixin {
   late TabController _tabController;
+  List<String> favoritos = [];
 
   @override
   void initState() {
@@ -39,21 +40,62 @@ class _MenuState extends State<Menu> with SingleTickerProviderStateMixin {
     );
   }
 
+
+  void agregarQuitarFavorito(String pokemon) {
+    setState(() {
+      if (favoritos.contains(pokemon)) {
+        favoritos.remove(pokemon);
+        _showSnackBar(context, "$pokemon eliminado de favoritos", backgroundColor: Colors.red);
+      } else {
+        favoritos.add(pokemon);
+        _showSnackBar(context, "$pokemon agregado a favoritos", backgroundColor: Colors.green);
+      }
+    });
+  }
+
+  void mostrarFavoritos(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      builder: (BuildContext context) {
+        return Container(
+          padding: const EdgeInsets.all(16.0),
+          child: favoritos.isEmpty
+              ? const Center(child: Text("No hay Pokémon favoritos", style: TextStyle(fontSize: 18)))
+              : ListView(
+                  children: favoritos.map((pokemon) {
+                    return ListTile(
+                      title: Text(pokemon, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                      trailing: IconButton(
+                        icon: const Icon(Icons.delete, color: Colors.red),
+                        onPressed: () {
+                          agregarQuitarFavorito(pokemon);
+                          Navigator.pop(context);
+                        },
+                      ),
+                    );
+                  }).toList(),
+                ),
+        );
+      },
+    );
+  }
+
+
   @override
   Widget build(BuildContext context) {
     return Theme(
       data: ThemeData(
-        primaryColor: Colors.yellow, // Amarillo Pikachu
-        scaffoldBackgroundColor: Colors.blue.shade100, // Fondo Azul
+        primaryColor: Colors.yellow, 
+        scaffoldBackgroundColor: Colors.blue.shade100,
         colorScheme: ColorScheme.light(
-          primary: Colors.red, // Rojo vibrante (Charizard)
-          secondary: Colors.blue, // Azul fuerte (Squirtle)
+          primary: Colors.red,
+          secondary: Colors.blue,
         ),
       ),
       child: Scaffold(
         appBar: AppBar(
           title: const Text("Demo Pokémon"),
-          backgroundColor: Colors.yellow, // Amarillo Pikachu
+          backgroundColor: Colors.yellow,
           bottom: TabBar(
             controller: _tabController,
             tabs: const [
@@ -76,7 +118,7 @@ class _MenuState extends State<Menu> with SingleTickerProviderStateMixin {
             padding: EdgeInsets.zero,
             children: <Widget>[
               const DrawerHeader(
-                decoration: BoxDecoration(color: Colors.red), // Rojo Pokébola
+                decoration: BoxDecoration(color: Colors.red),
                 child: Text(
                   'Menú Pokémon',
                   style: TextStyle(color: Colors.white, fontSize: 24),
@@ -120,11 +162,7 @@ class _MenuState extends State<Menu> with SingleTickerProviderStateMixin {
                   title: 'Pokémon Eléctrico',
                   description: 'Favoritos de tipo eléctrico',
                   onPressed: () {
-                    _showSnackBar(
-                      context,
-                      'Pokémon Eléctrico seleccionado',
-                      backgroundColor: Colors.yellow.shade700,
-                    );
+                    agregarQuitarFavorito('Pokémon Eléctrico');
                   },
                   icon: Icons.bolt,
                   iconColor: Colors.yellow.shade600,
@@ -135,11 +173,7 @@ class _MenuState extends State<Menu> with SingleTickerProviderStateMixin {
                   title: 'Pokémon Fuego',
                   description: 'Favoritos de tipo fuego',
                   onPressed: () {
-                    _showSnackBar(
-                      context,
-                      'Pokémon Fuego seleccionado',
-                      backgroundColor: Colors.red.shade700,
-                    );
+                    agregarQuitarFavorito('Pokémon Fuego');
                   },
                   icon: Icons.local_fire_department,
                   iconColor: Colors.red.shade600,
@@ -150,11 +184,7 @@ class _MenuState extends State<Menu> with SingleTickerProviderStateMixin {
                   title: 'Pokémon Agua',
                   description: 'Favoritos de tipo agua',
                   onPressed: () {
-                    _showSnackBar(
-                      context,
-                      'Pokémon Agua seleccionado',
-                      backgroundColor: Colors.blue.shade700,
-                    );
+                    agregarQuitarFavorito('Pokémon Agua');
                   },
                   icon: Icons.water_drop,
                   iconColor: Colors.blue.shade600,
@@ -173,11 +203,7 @@ class _MenuState extends State<Menu> with SingleTickerProviderStateMixin {
                   const SizedBox(height: 20),
                   ElevatedButton(
                     onPressed: () {
-                      _showSnackBar(
-                        context,
-                        'Ajustes guardados',
-                        backgroundColor: Colors.green,
-                      );
+                      _showSnackBar(context, 'Ajustes guardados', backgroundColor: Colors.green);
                     },
                     child: const Text('Guardar ajustes'),
                   ),
@@ -192,6 +218,13 @@ class _MenuState extends State<Menu> with SingleTickerProviderStateMixin {
               ),
             ),
           ],
+        ),
+        floatingActionButton: FloatingActionButton(
+          onPressed: () {
+            mostrarFavoritos(context);
+          },
+          backgroundColor: Colors.red,
+          child: const Icon(Icons.favorite, color: Colors.white),
         ),
       ),
     );
@@ -229,27 +262,16 @@ class CustomCard extends StatelessWidget {
             Container(
               height: 120,
               width: double.infinity,
-              decoration: BoxDecoration(
-                color: backgroundColor,
-                borderRadius: const BorderRadius.vertical(
-                  top: Radius.circular(10.0),
-                ),
-              ),
-              child: Icon(icon, size: 60, color: iconColor),
+              color: backgroundColor,
               alignment: Alignment.center,
+              child: Icon(icon, size: 60, color: iconColor),
             ),
             Padding(
               padding: const EdgeInsets.all(16.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    title,
-                    style: const TextStyle(
-                      fontSize: 18.0,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
+                  Text(title, style: const TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold)),
                   const SizedBox(height: 8.0),
                   Text(description),
                 ],
