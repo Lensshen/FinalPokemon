@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'Pantallitas/pokemon_listita_pantallita.dart';
+import 'Pantallitas/favoritosGuardaditos_pantallita.dart';
 
 class Menu extends StatefulWidget {
   const Menu({Key? key}) : super(key: key);
@@ -17,7 +18,7 @@ class _MenuState extends State<Menu> with SingleTickerProviderStateMixin {
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 3, vsync: this);
+    _tabController = TabController(length: 4, vsync: this);
   }
 
   @override
@@ -55,6 +56,7 @@ class _MenuState extends State<Menu> with SingleTickerProviderStateMixin {
           controller: _tabController,
           tabs: const [
             Tab(icon: Icon(Icons.home), text: "Inicio"),
+            Tab(icon: Icon(Icons.favorite), text: "Clasificacion"),
             Tab(icon: Icon(Icons.favorite), text: "Favoritos"),
             Tab(icon: Icon(Icons.settings), text: "Ajustes"),
           ],
@@ -80,7 +82,7 @@ class _MenuState extends State<Menu> with SingleTickerProviderStateMixin {
               ),
             ),
             ListTile(
-              leading: const Icon(Icons.home),
+              leading: const Icon(Icons.catching_pokemon),
               title: const Text("Inicio"),
               onTap: () {
                 _tabController.animateTo(0);
@@ -88,10 +90,18 @@ class _MenuState extends State<Menu> with SingleTickerProviderStateMixin {
               },
             ),
             ListTile(
+              leading: const Icon(Icons.category),
+              title: const Text("Clasificación"),
+              onTap: () {
+                _tabController.animateTo(1);
+                Navigator.pop(context);
+              },
+            ),
+            ListTile(
               leading: const Icon(Icons.favorite),
               title: const Text("Favoritos"),
               onTap: () {
-                _tabController.animateTo(1);
+                _tabController.animateTo(2);
                 Navigator.pop(context);
               },
             ),
@@ -99,7 +109,7 @@ class _MenuState extends State<Menu> with SingleTickerProviderStateMixin {
               leading: const Icon(Icons.settings),
               title: const Text("Ajustes"),
               onTap: () {
-                _tabController.animateTo(2);
+                _tabController.animateTo(3);
                 Navigator.pop(context);
               },
             ),
@@ -109,10 +119,10 @@ class _MenuState extends State<Menu> with SingleTickerProviderStateMixin {
       body: TabBarView(
         controller: _tabController,
         children: [
-          // Inicio (Pokémon list)
+          // 0. Inicio → Lista real de Pokémon desde API
           const PokemonListitaPantallita(),
 
-          // Favoritos (sin cambios)
+          // 1. Clasificación → Tarjetas Hielo, Fuego, Agua
           ListView(
             padding: const EdgeInsets.all(16.0),
             children: [
@@ -160,7 +170,10 @@ class _MenuState extends State<Menu> with SingleTickerProviderStateMixin {
             ],
           ),
 
-          // Ajustes
+          // 2. Favoritos → Firebase Firestore
+          const FavoritosGuardaditosPantallita(),
+
+          // 3. Ajustes
           Center(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
