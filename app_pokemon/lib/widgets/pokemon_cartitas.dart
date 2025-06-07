@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import '../modelitos/PokemonModelitos.dart';
+import '../ServiciosPaConectarseAPI/ServicioPaFire.dart';
 import '../widgets/tipo_insignias.dart';
 import '../Pantallitas/pokemon_detallitos_pantallita.dart';
-import '../ServiciosPaConectarseAPI/ServicioPaFire.dart';
 
 class PokemonCartita extends StatefulWidget {
   final PokemonModelito pokemon;
@@ -14,7 +14,7 @@ class PokemonCartita extends StatefulWidget {
 }
 
 class _PokemonCartitaState extends State<PokemonCartita> {
-  bool _yaEsFavorito = false;
+  bool _esFavorito = false;
 
   @override
   void initState() {
@@ -23,23 +23,37 @@ class _PokemonCartitaState extends State<PokemonCartita> {
   }
 
   Future<void> _verificarFavorito() async {
-    final existe = await ServicioPaFire().estaEnFavoritos(
-      widget.pokemon.nombre,
-    );
-    setState(() {
-      _yaEsFavorito = existe;
-    });
+    try {
+      final existe = await ServicioPaFire().estaEnFavoritos(
+        widget.pokemon.nombre,
+      );
+      setState(() {
+        _esFavorito = existe;
+      });
+    } catch (e) {
+      print("Error al verificar favorito: $e");
+    }
   }
 
-  Future<void> _agregarAFavoritos() async {
+  Future<void> _alternarFavorito() async {
     try {
-      await ServicioPaFire().agregarAFavoritos(widget.pokemon);
+      if (_esFavorito) {
+        await ServicioPaFire().eliminarDeFavoritos(widget.pokemon.nombre);
+      } else {
+        await ServicioPaFire().agregarAFavoritos(widget.pokemon);
+      }
+
       setState(() {
-        _yaEsFavorito = true;
+        _esFavorito = !_esFavorito;
       });
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(const SnackBar(content: Text('Agregado a favoritos')));
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            _esFavorito ? 'Agregado a favoritos' : 'Eliminado de favoritos',
+          ),
+        ),
+      );
     } catch (e) {
       ScaffoldMessenger.of(
         context,
@@ -64,13 +78,26 @@ class _PokemonCartitaState extends State<PokemonCartita> {
           );
         },
         child: Padding(
-          padding: const EdgeInsets.all(8.0),
+          padding: const EdgeInsets.all(8),
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Image.network(
-                widget.pokemon.imagenUrl,
-                height: 100,
-                fit: BoxFit.cover,
+              Stack(
+                alignment: Alignment.topRight,
+                children: [
+                  Image.network(
+                    widget.pokemon.imagenUrl,
+                    height: 100,
+                    fit: BoxFit.cover,
+                  ),
+                  IconButton(
+                    icon: Icon(
+                      _esFavorito ? Icons.favorite : Icons.favorite_border,
+                      color: Colors.redAccent,
+                    ),
+                    onPressed: _alternarFavorito,
+                  ),
+                ],
               ),
               const SizedBox(height: 8),
               Text(
@@ -84,21 +111,6 @@ class _PokemonCartitaState extends State<PokemonCartita> {
                     widget.pokemon.tipos
                         .map((tipo) => TipoInsignia(tipo: tipo))
                         .toList(),
-              ),
-              const Spacer(),
-              ElevatedButton.icon(
-                icon: Icon(
-                  _yaEsFavorito ? Icons.check_circle : Icons.favorite_border,
-                ),
-                label: Text(_yaEsFavorito ? "Ya en favoritos" : "Favorito"),
-                onPressed: _yaEsFavorito ? null : _agregarAFavoritos,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor:
-                      _yaEsFavorito ? Colors.grey : Colors.redAccent,
-                  foregroundColor: Colors.white,
-                  minimumSize: const Size.fromHeight(36),
-                  textStyle: const TextStyle(fontSize: 12),
-                ),
               ),
             ],
           ),

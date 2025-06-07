@@ -7,16 +7,32 @@ class ServicioPaFire {
   final FirebaseFirestore _db = FirebaseFirestore.instance;
 
   Future<void> agregarAFavoritos(PokemonModelito pokemon) async {
+    try {
+      final uid = _auth.currentUser?.uid;
+      if (uid == null) throw Exception("Usuario no autenticado");
+
+      await _db
+          .collection('usuarios')
+          .doc(uid)
+          .collection('favoritos')
+          .doc(pokemon.nombre)
+          .set(pokemon.toMap());
+    } catch (e) {
+      print("Error al guardar favorito: $e");
+      rethrow;
+    }
+  }
+
+  Future<void> eliminarDeFavoritos(String nombrePokemon) async {
     final uid = _auth.currentUser?.uid;
     if (uid == null) throw Exception("Usuario no autenticado");
 
-    final docRef = _db
+    await _db
         .collection('usuarios')
         .doc(uid)
         .collection('favoritos')
-        .doc(pokemon.nombre);
-
-    await docRef.set(pokemon.toMap());
+        .doc(nombrePokemon)
+        .delete();
   }
 
   Future<bool> estaEnFavoritos(String nombrePokemon) async {
@@ -44,30 +60,5 @@ class ServicioPaFire {
     return snapshot.docs
         .map((doc) => PokemonModelito.fromMap(doc.data()))
         .toList();
-  }
-
-  Future<void> eliminarDeFavoritos(String nombrePokemon) async {
-    final uid = _auth.currentUser?.uid;
-    if (uid == null) throw Exception("Usuario no autenticado");
-
-    await _db
-        .collection('usuarios')
-        .doc(uid)
-        .collection('favoritos')
-        .doc(nombrePokemon)
-        .delete();
-  }
-
-  Future<void> actualizarPerfilUsuario({
-    required String nombre,
-    String? fotoUrl,
-  }) async {
-    final uid = _auth.currentUser?.uid;
-    if (uid == null) throw Exception("Usuario no autenticado");
-
-    await _db.collection('usuarios').doc(uid).set({
-      'nombre': nombre,
-      'fotoUrl': fotoUrl ?? '',
-    }, SetOptions(merge: true));
   }
 }

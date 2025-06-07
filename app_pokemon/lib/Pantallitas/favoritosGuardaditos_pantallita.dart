@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import '../ServiciosPaConectarseAPI/ServicioPaFire.dart';
 import '../modelitos/PokemonModelitos.dart';
 import '../widgets/pokemon_cartitas.dart';
@@ -20,13 +19,16 @@ class _FavoritosGuardaditosPantallitaState
   @override
   void initState() {
     super.initState();
+    _cargarFavoritos();
+  }
+
+  void _cargarFavoritos() {
     _favoritos = ServicioPaFire().obtenerFavoritos();
   }
 
-  Future<void> _eliminar(String nombre) async {
-    await ServicioPaFire().eliminarDeFavoritos(nombre);
+  void _refrescar() {
     setState(() {
-      _favoritos = ServicioPaFire().obtenerFavoritos(); // Recargar la lista
+      _cargarFavoritos();
     });
   }
 
@@ -44,25 +46,23 @@ class _FavoritosGuardaditosPantallitaState
         }
 
         final lista = snapshot.data!;
-        return ListView.builder(
-          padding: const EdgeInsets.all(12),
-          itemCount: lista.length,
-          itemBuilder: (context, index) {
-            final pokemon = lista[index];
-            return Stack(
-              children: [
-                PokemonCartita(pokemon: pokemon),
-                Positioned(
-                  top: 4,
-                  right: 4,
-                  child: IconButton(
-                    icon: const Icon(Icons.delete, color: Colors.redAccent),
-                    onPressed: () => _eliminar(pokemon.nombre),
-                  ),
-                ),
-              ],
-            );
+        return RefreshIndicator(
+          onRefresh: () async {
+            _refrescar();
           },
+          child: GridView.builder(
+            padding: const EdgeInsets.all(12),
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 2,
+              crossAxisSpacing: 12,
+              mainAxisSpacing: 12,
+              childAspectRatio: 0.9,
+            ),
+            itemCount: lista.length,
+            itemBuilder: (context, index) {
+              return PokemonCartita(pokemon: lista[index]);
+            },
+          ),
         );
       },
     );
