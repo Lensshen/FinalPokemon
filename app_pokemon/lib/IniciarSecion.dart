@@ -49,7 +49,7 @@ class LoginScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFFAF0FA),
+      backgroundColor: const Color.fromARGB(255, 235, 114, 235),
       body: Center(
         child: Padding(
           padding: const EdgeInsets.all(24.0),
@@ -68,7 +68,7 @@ class LoginScreen extends StatelessWidget {
                 label: const Text("Iniciar con Google"),
                 onPressed: () => _signInWithGoogle(context),
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.white,
+                  backgroundColor: const Color.fromARGB(255, 130, 243, 168),
                   foregroundColor: Colors.black,
                   padding: const EdgeInsets.symmetric(
                     horizontal: 24,
