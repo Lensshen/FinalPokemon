@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "621426393684",
+    "project_id": "pokeproyecto-793b5",
+    "storage_bucket": "pokeproyecto-793b5.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:621426393684:android:c3bc5e18c449b39de123c1",
+        "android_client_info": {
+          "package_name": "com.example.app_pokemon"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB6bOV-A3XTtyWftwVNGVNhUotg8tiCArA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
