@@ -11,8 +11,6 @@ class Menu extends StatefulWidget {
 
 class _MenuState extends State<Menu> with SingleTickerProviderStateMixin {
   late TabController _tabController;
-  int _counter = 0;
-  double _scale = 1.0;
 
   @override
   void initState() {
@@ -26,11 +24,7 @@ class _MenuState extends State<Menu> with SingleTickerProviderStateMixin {
     super.dispose();
   }
 
-  void _showSnackBar(
-    BuildContext context,
-    String message, {
-    Color backgroundColor = Colors.blue,
-  }) {
+  void _showSnackBar(BuildContext context, String message, {Color backgroundColor = Colors.blue}) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(message),
@@ -47,150 +41,158 @@ class _MenuState extends State<Menu> with SingleTickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text("Demo de Flutter"),
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        bottom: TabBar(
-          controller: _tabController,
-          tabs: const [
-            Tab(icon: Icon(Icons.home), text: "Inicio"),
-            Tab(icon: Icon(Icons.favorite), text: "Favoritos"),
-            Tab(icon: Icon(Icons.settings), text: "Ajustes"),
-          ],
+    return Theme(
+      data: ThemeData(
+        primaryColor: Colors.yellow, // Amarillo Pikachu
+        scaffoldBackgroundColor: Colors.blue.shade100, // Fondo Azul
+        colorScheme: ColorScheme.light(
+          primary: Colors.red, // Rojo vibrante (Charizard)
+          secondary: Colors.blue, // Azul fuerte (Squirtle)
         ),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.notifications),
-            onPressed: () {
-              _showSnackBar(context, 'Notificaciones presionadas');
-            },
+      ),
+      child: Scaffold(
+        appBar: AppBar(
+          title: const Text("Demo Pokémon"),
+          backgroundColor: Colors.yellow, // Amarillo Pikachu
+          bottom: TabBar(
+            controller: _tabController,
+            tabs: const [
+              Tab(icon: Icon(Icons.home), text: "Inicio"),
+              Tab(icon: Icon(Icons.favorite), text: "Favoritos"),
+              Tab(icon: Icon(Icons.settings), text: "Ajustes"),
+            ],
           ),
-        ],
-      ),
-      drawer: Drawer(
-        child: ListView(
-          padding: EdgeInsets.zero,
-          children: <Widget>[
-            const DrawerHeader(
-              decoration: BoxDecoration(color: Colors.blue),
-              child: Text(
-                'Menú Drawer',
-                style: TextStyle(color: Colors.white, fontSize: 24),
-              ),
-            ),
-            ListTile(
-              leading: const Icon(Icons.home),
-              title: const Text("Inicio"),
-              onTap: () {
-                _tabController.animateTo(0);
-                Navigator.pop(context);
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.favorite),
-              title: const Text("Favoritos"),
-              onTap: () {
-                _tabController.animateTo(1);
-                Navigator.pop(context);
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.settings),
-              title: const Text("Ajustes"),
-              onTap: () {
-                _tabController.animateTo(2);
-                Navigator.pop(context);
+          actions: [
+            IconButton(
+              icon: const Icon(Icons.notifications),
+              onPressed: () {
+                _showSnackBar(context, 'Notificaciones presionadas', backgroundColor: Colors.yellow.shade700);
               },
             ),
           ],
         ),
-      ),
-      body: TabBarView(
-        controller: _tabController,
-        children: [
-          // Inicio (Pokémon list)
-          const PokemonListitaPantallita(),
-
-          // Favoritos (sin cambios)
-          ListView(
-            padding: const EdgeInsets.all(16.0),
-            children: [
-              CustomCard(
-                title: 'Pokemones Hielo',
-                description: 'Favoritos de tipo Hielo',
-                onPressed: () {
-                  _showSnackBar(
-                    context,
-                    'Tarjeta 1 presionada',
-                    backgroundColor: Colors.lightBlue,
-                  );
-                },
-                icon: Icons.ac_unit,
-                iconColor: Colors.lightBlue,
+        drawer: Drawer(
+          child: ListView(
+            padding: EdgeInsets.zero,
+            children: <Widget>[
+              const DrawerHeader(
+                decoration: BoxDecoration(color: Colors.red), // Rojo Pokébola
+                child: Text(
+                  'Menú Pokémon',
+                  style: TextStyle(color: Colors.white, fontSize: 24),
+                ),
               ),
-              const SizedBox(height: 16.0),
-              CustomCard(
-                title: 'Pokemones Fuego',
-                description: 'Favoritos de tipo Fuego',
-                onPressed: () {
-                  _showSnackBar(
-                    context,
-                    'Tarjeta 2 presionada',
-                    backgroundColor: Colors.orange,
-                  );
+              ListTile(
+                leading: const Icon(Icons.home, color: Colors.yellow),
+                title: const Text("Inicio"),
+                onTap: () {
+                  _tabController.animateTo(0);
+                  Navigator.pop(context);
                 },
-                icon: Icons.local_fire_department,
-                iconColor: Colors.orange,
               ),
-              const SizedBox(height: 16.0),
-              CustomCard(
-                title: 'Pokemones Agua',
-                description: 'Favoritos de tipo Agua',
-                onPressed: () {
-                  _showSnackBar(
-                    context,
-                    'Tarjeta 3 presionada',
-                    backgroundColor: Colors.blue,
-                  );
+              ListTile(
+                leading: const Icon(Icons.favorite, color: Colors.red),
+                title: const Text("Favoritos"),
+                onTap: () {
+                  _tabController.animateTo(1);
+                  Navigator.pop(context);
                 },
-                icon: Icons.water_drop,
-                iconColor: Colors.blue,
+              ),
+              ListTile(
+                leading: const Icon(Icons.settings, color: Colors.blue),
+                title: const Text("Ajustes"),
+                onTap: () {
+                  _tabController.animateTo(2);
+                  Navigator.pop(context);
+                },
               ),
             ],
           ),
-
-          // Ajustes
-          Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
+        ),
+        body: TabBarView(
+          controller: _tabController,
+          children: [
+            const PokemonListitaPantallita(),
+            ListView(
+              padding: const EdgeInsets.all(16.0),
               children: [
-                const Text(
-                  'Pantalla de Ajustes',
-                  style: TextStyle(fontSize: 24),
-                ),
-                const SizedBox(height: 20),
-                ElevatedButton(
+                CustomCard(
+                  title: 'Pokémon Eléctrico',
+                  description: 'Favoritos de tipo eléctrico',
                   onPressed: () {
                     _showSnackBar(
                       context,
-                      'Ajustes guardados',
-                      backgroundColor: Colors.green,
+                      'Pokémon Eléctrico seleccionado',
+                      backgroundColor: Colors.yellow.shade700,
                     );
                   },
-                  child: const Text('Guardar ajustes'),
+                  icon: Icons.bolt,
+                  iconColor: Colors.yellow.shade600,
+                  backgroundColor: Colors.yellow.shade300,
                 ),
-                const SizedBox(height: 20),
-                ElevatedButton(
-                  onPressed: () async {
-                    await FirebaseAuth.instance.signOut();
+                const SizedBox(height: 16.0),
+                CustomCard(
+                  title: 'Pokémon Fuego',
+                  description: 'Favoritos de tipo fuego',
+                  onPressed: () {
+                    _showSnackBar(
+                      context,
+                      'Pokémon Fuego seleccionado',
+                      backgroundColor: Colors.red.shade700,
+                    );
                   },
-                  child: const Text('Cerrar sesión'),
+                  icon: Icons.local_fire_department,
+                  iconColor: Colors.red.shade600,
+                  backgroundColor: Colors.red.shade300,
+                ),
+                const SizedBox(height: 16.0),
+                CustomCard(
+                  title: 'Pokémon Agua',
+                  description: 'Favoritos de tipo agua',
+                  onPressed: () {
+                    _showSnackBar(
+                      context,
+                      'Pokémon Agua seleccionado',
+                      backgroundColor: Colors.blue.shade700,
+                    );
+                  },
+                  icon: Icons.water_drop,
+                  iconColor: Colors.blue.shade600,
+                  backgroundColor: Colors.blue.shade300,
                 ),
               ],
             ),
-          ),
-        ],
+            Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Text(
+                    'Pantalla de Ajustes',
+                    style: TextStyle(fontSize: 24),
+                  ),
+                  const SizedBox(height: 20),
+                  ElevatedButton(
+                    onPressed: () {
+                      _showSnackBar(
+                        context,
+                        'Ajustes guardados',
+                        backgroundColor: Colors.green,
+                      );
+                    },
+                    child: const Text('Guardar ajustes'),
+                  ),
+                  const SizedBox(height: 20),
+                  ElevatedButton(
+                    onPressed: () async {
+                      await FirebaseAuth.instance.signOut();
+                    },
+                    child: const Text('Cerrar sesión'),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -202,6 +204,7 @@ class CustomCard extends StatelessWidget {
   final VoidCallback onPressed;
   final IconData icon;
   final Color iconColor;
+  final Color backgroundColor;
 
   const CustomCard({
     Key? key,
@@ -210,6 +213,7 @@ class CustomCard extends StatelessWidget {
     required this.onPressed,
     required this.icon,
     required this.iconColor,
+    required this.backgroundColor,
   }) : super(key: key);
 
   @override
@@ -226,7 +230,7 @@ class CustomCard extends StatelessWidget {
               height: 120,
               width: double.infinity,
               decoration: BoxDecoration(
-                color: iconColor.withOpacity(0.2),
+                color: backgroundColor,
                 borderRadius: const BorderRadius.vertical(
                   top: Radius.circular(10.0),
                 ),
