@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'Pantallitas/pokemon_listita_pantallita.dart';
 
 class Menu extends StatefulWidget {
   const Menu({Key? key}) : super(key: key);
@@ -108,49 +109,10 @@ class _MenuState extends State<Menu> with SingleTickerProviderStateMixin {
       body: TabBarView(
         controller: _tabController,
         children: [
-          // Inicio
-          Center(
-            child: GestureDetector(
-              onTap: () {
-                _showSnackBar(context, 'Contenedor presionado');
-              },
-              onDoubleTap: () {
-                setState(() {
-                  _scale = _scale == 1.0 ? 1.5 : 1.0;
-                });
-                _showSnackBar(
-                  context,
-                  'Contenedor escalado: ${_scale == 1.5 ? 'Ampliado' : 'Normal'}',
-                  backgroundColor: Colors.green,
-                );
-              },
-              child: AnimatedScale(
-                scale: _scale,
-                duration: const Duration(milliseconds: 300),
-                child: Container(
-                  width: 200,
-                  height: 200,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(10),
-                    color: Colors.blue[200],
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.2),
-                        spreadRadius: 2,
-                        blurRadius: 5,
-                        offset: const Offset(0, 3),
-                      ),
-                    ],
-                  ),
-                  child: const Center(
-                    child: Icon(Icons.touch_app, size: 50, color: Colors.white),
-                  ),
-                ),
-              ),
-            ),
-          ),
+          // Inicio (Pokémon list)
+          const PokemonListitaPantallita(),
 
-          // Favoritos
+          // Favoritos (sin cambios)
           ListView(
             padding: const EdgeInsets.all(16.0),
             children: [
@@ -229,16 +191,6 @@ class _MenuState extends State<Menu> with SingleTickerProviderStateMixin {
             ),
           ),
         ],
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          setState(() {
-            _counter++;
-          });
-          _showSnackBar(context, 'Contador: $_counter');
-        },
-        tooltip: 'Incrementar',
-        child: const Icon(Icons.add),
       ),
     );
   }
