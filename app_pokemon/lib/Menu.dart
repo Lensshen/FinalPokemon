@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'Pantallitas/pokemon_listita_pantallita.dart';
 import 'Pantallitas/favoritosGuardaditos_pantallita.dart';
+import 'Pantallitas/perfil_pantallita.dart';
 
 class Menu extends StatefulWidget {
   const Menu({Key? key}) : super(key: key);
@@ -18,7 +19,7 @@ class _MenuState extends State<Menu> with SingleTickerProviderStateMixin {
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 4, vsync: this);
+    _tabController = TabController(length: 5, vsync: this);
   }
 
   @override
@@ -55,10 +56,11 @@ class _MenuState extends State<Menu> with SingleTickerProviderStateMixin {
         bottom: TabBar(
           controller: _tabController,
           tabs: const [
-            Tab(icon: Icon(Icons.home), text: "Inicio"),
-            Tab(icon: Icon(Icons.favorite), text: "Clasificacion"),
+            Tab(icon: Icon(Icons.catching_pokemon), text: "Inicio"),
+            Tab(icon: Icon(Icons.category), text: "Clasificación"),
             Tab(icon: Icon(Icons.favorite), text: "Favoritos"),
             Tab(icon: Icon(Icons.settings), text: "Ajustes"),
+            Tab(icon: Icon(Icons.person), text: "Perfil"),
           ],
         ),
         actions: [
@@ -113,16 +115,22 @@ class _MenuState extends State<Menu> with SingleTickerProviderStateMixin {
                 Navigator.pop(context);
               },
             ),
+            ListTile(
+              leading: const Icon(Icons.person),
+              title: const Text("Perfil"),
+              onTap: () {
+                _tabController.animateTo(4);
+                Navigator.pop(context);
+              },
+            ),
           ],
         ),
       ),
       body: TabBarView(
         controller: _tabController,
         children: [
-          // 0. Inicio → Lista real de Pokémon desde API
           const PokemonListitaPantallita(),
 
-          // 1. Clasificación → Tarjetas Hielo, Fuego, Agua
           ListView(
             padding: const EdgeInsets.all(16.0),
             children: [
@@ -203,6 +211,7 @@ class _MenuState extends State<Menu> with SingleTickerProviderStateMixin {
               ],
             ),
           ),
+          const PerfilPantallita(),
         ],
       ),
     );

@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import '../modelitos/PokemonModelitos.dart';
+import '../modelitos/usuario_modelitos.dart';
 
 class ServicioPaFire {
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -60,5 +61,27 @@ class ServicioPaFire {
     return snapshot.docs
         .map((doc) => PokemonModelito.fromMap(doc.data()))
         .toList();
+  }
+
+  Future<UsuarioModelito?> obtenerPerfilUsuario() async {
+    final uid = _auth.currentUser?.uid;
+    if (uid == null) return null;
+
+    final doc = await _db.collection('usuarios').doc(uid).get();
+    if (!doc.exists) return null;
+
+    return UsuarioModelito.fromMap(doc.data()!);
+  }
+
+  Future<void> actualizarPerfilUsuario({required String nombre}) async {
+    final uid = _auth.currentUser?.uid;
+    if (uid == null) return;
+
+    await _db.collection('usuarios').doc(uid).set({
+      'nombre': nombre,
+      'email': _auth.currentUser?.email,
+      'fotoUrl': _auth.currentUser?.photoURL,
+      'uid': uid,
+    }, SetOptions(merge: true));
   }
 }
