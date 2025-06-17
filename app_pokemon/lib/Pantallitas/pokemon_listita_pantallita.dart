@@ -24,7 +24,6 @@ class _PokemonListitaPantallitaState extends State<PokemonListitaPantallita> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Lista de Pokémon')),
       body: FutureBuilder<List<PokemonModelito>>(
         future: _pokemones,
         builder: (context, snapshot) {
