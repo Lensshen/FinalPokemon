@@ -90,7 +90,7 @@ class _PokemonDetallitosPantallitaState
             ),
             const SizedBox(height: 30),
             const Text(
-              'Aquí podrías mostrar más detalles como habilidades, estadísticas, evolución, etc.',
+              'Pokemon macizo como JOH',
               textAlign: TextAlign.center,
               style: TextStyle(fontSize: 16),
             ),
