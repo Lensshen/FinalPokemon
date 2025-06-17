@@ -38,10 +38,10 @@ class _PokemonListitaPantallitaState extends State<PokemonListitaPantallita> {
             return GridView.builder(
               padding: const EdgeInsets.all(12),
               gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,
+                crossAxisCount: 3, // Ahora se muestran 3 cartas por fila
                 crossAxisSpacing: 12,
                 mainAxisSpacing: 12,
-                childAspectRatio: 0.9,
+                childAspectRatio: 0.85, // Puedes ajustar esto para afinar la altura
               ),
               itemCount: lista.length,
               itemBuilder: (context, index) {
