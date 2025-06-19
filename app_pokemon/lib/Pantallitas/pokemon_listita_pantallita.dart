@@ -17,6 +17,7 @@ class _PokemonListitaPantallitaState extends State<PokemonListitaPantallita> {
   List<PokemonModelito> _filtrados = [];
 
   final TextEditingController _searchController = TextEditingController();
+  bool _cargandoDesdeApi = false;
 
   @override
   void initState() {
@@ -25,21 +26,50 @@ class _PokemonListitaPantallitaState extends State<PokemonListitaPantallita> {
     _searchController.addListener(_filtrar);
   }
 
+
   void _cargarPokemones() {
-    _pokemonesFuture = PokeServicio().obtenerPokemones().then((lista) {
+    _pokemonesFuture = PokeServicio().obtener().then((lista) {
       _pokemones = lista;
       _filtrados = lista;
       return lista;
     });
   }
 
-  void _filtrar() {
+  Future<void> _filtrar() async {
     final query = _searchController.text.toLowerCase();
-    setState(() {
-      _filtrados = _pokemones
-          .where((p) => p.nombre.toLowerCase().contains(query))
-          .toList();
-    });
+
+    if (query.isEmpty) {
+      setState(() {
+        _filtrados = _pokemones;
+      });
+      return;
+    }
+
+    final encontrados = _pokemones
+        .where((p) => p.nombre.toLowerCase().contains(query))
+        .toList();
+
+    if (encontrados.isNotEmpty) {
+      setState(() {
+        _filtrados = encontrados;
+      });
+    } else {
+      setState(() {
+        _cargandoDesdeApi = true;
+      });
+
+
+      final pokemonApi = await PokeServicio().buscar(query);
+
+      setState(() {
+        _cargandoDesdeApi = false;
+        if (pokemonApi != null) {
+          _filtrados = [pokemonApi];
+        } else {
+          _filtrados = [];
+        }
+      });
+    }
   }
 
   @override
@@ -56,7 +86,7 @@ class _PokemonListitaPantallitaState extends State<PokemonListitaPantallita> {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const CargandoIndicator();
         } else if (snapshot.hasError) {
-          return Center(child: Text('Error: \${snapshot.error}'));
+          return Center(child: Text('Error: ${snapshot.error}'));
         } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
           return const Center(child: Text('No se encontraron Pokémon.'));
         }
@@ -80,21 +110,23 @@ class _PokemonListitaPantallitaState extends State<PokemonListitaPantallita> {
               ),
             ),
             Expanded(
-              child: _filtrados.isEmpty
-                  ? const Center(child: Text('No hay coincidencias.'))
-                  : GridView.builder(
-                      padding: const EdgeInsets.symmetric(horizontal: 12),
-                      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 3,
-                        crossAxisSpacing: 12,
-                        mainAxisSpacing: 12,
-                        childAspectRatio: 1.5,
-                      ),
-                      itemCount: _filtrados.length,
-                      itemBuilder: (context, index) {
-                        return PokemonCartita(pokemon: _filtrados[index]);
-                      },
-                    ),
+              child: _cargandoDesdeApi
+                  ? const CargandoIndicator()
+                  : _filtrados.isEmpty
+                      ? const Center(child: Text('No hay coincidencias.'))
+                      : GridView.builder(
+                          padding: const EdgeInsets.symmetric(horizontal: 12),
+                          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 3,
+                            crossAxisSpacing: 12,
+                            mainAxisSpacing: 12,
+                            childAspectRatio: 1.5,
+                          ),
+                          itemCount: _filtrados.length,
+                          itemBuilder: (context, index) {
+                            return PokemonCartita(pokemon: _filtrados[index]);
+                          },
+                        ),
             ),
           ],
         );
@@ -102,4 +134,3 @@ class _PokemonListitaPantallitaState extends State<PokemonListitaPantallita> {
     );
   }
 }
-
