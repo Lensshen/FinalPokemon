@@ -24,9 +24,11 @@ class _PokemonClasificacionPantallitaState
     'normal',
   ];
 
-  List<PokemonModelito> _lista = [];
+  List<PokemonModelito> _todosDelTipo = [];
+  List<PokemonModelito> _visibles = [];
   String _tipoSeleccionado = 'fire';
   bool _cargando = true;
+  int _cantidadVisible = 10;
 
   @override
   void initState() {
@@ -38,55 +40,78 @@ class _PokemonClasificacionPantallitaState
     setState(() {
       _cargando = true;
       _tipoSeleccionado = tipo;
+      _cantidadVisible = 10;
+      _visibles = [];
     });
-    final pokes = await PokeServicio().obtenerPorTipo(tipo);
+
+    final listaCompleta = await PokeServicio().obtenerPorTipo(tipo);
     setState(() {
-      _lista = pokes;
+      _todosDelTipo = listaCompleta;
+      _visibles = _todosDelTipo.take(_cantidadVisible).toList();
       _cargando = false;
+    });
+  }
+
+  void _cargarMas() {
+    final nuevoLimite = _cantidadVisible + 10;
+    setState(() {
+      _cantidadVisible = nuevoLimite;
+      _visibles = _todosDelTipo.take(_cantidadVisible).toList();
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        SingleChildScrollView(
-          scrollDirection: Axis.horizontal,
-          padding: const EdgeInsets.all(8),
-          child: Row(
-            children:
-                tipos.map((tipo) {
-                  final esSeleccionado = tipo == _tipoSeleccionado;
-                  return Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 4),
-                    child: ChoiceChip(
-                      label: Text(tipo.toUpperCase()),
-                      selected: esSeleccionado,
-                      onSelected: (_) => _cargarPorTipo(tipo),
-                    ),
-                  );
-                }).toList(),
+    return Scaffold(
+      body: Column(
+        children: [
+          SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            padding: const EdgeInsets.all(8),
+            child: Row(
+              children:
+                  tipos.map((tipo) {
+                    final esSeleccionado = tipo == _tipoSeleccionado;
+                    return Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 4),
+                      child: ChoiceChip(
+                        label: Text(tipo.toUpperCase()),
+                        selected: esSeleccionado,
+                        onSelected: (_) => _cargarPorTipo(tipo),
+                      ),
+                    );
+                  }).toList(),
+            ),
           ),
-        ),
-        Expanded(
-          child:
-              _cargando
-                  ? const Center(child: CircularProgressIndicator())
-                  : GridView.builder(
-                    padding: const EdgeInsets.all(8),
-                    itemCount: _lista.length,
-                    gridDelegate:
-                        const SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 3,
-                          childAspectRatio: 1.50,
-                          mainAxisSpacing: 7,
-                          crossAxisSpacing: 7,
-                        ),
-                    itemBuilder:
-                        (_, index) => PokemonCartita(pokemon: _lista[index]),
-                  ),
-        ),
-      ],
+          Expanded(
+            child:
+                _cargando
+                    ? const Center(child: CircularProgressIndicator())
+                    : GridView.builder(
+                      padding: const EdgeInsets.all(8),
+                      itemCount: _visibles.length,
+                      gridDelegate:
+                          const SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 3,
+                            childAspectRatio: 1.50,
+                            mainAxisSpacing: 7,
+                            crossAxisSpacing: 7,
+                          ),
+                      itemBuilder:
+                          (_, index) =>
+                              PokemonCartita(pokemon: _visibles[index]),
+                    ),
+          ),
+        ],
+      ),
+      floatingActionButton:
+          (!_cargando && _visibles.length < _todosDelTipo.length)
+              ? FloatingActionButton.small(
+                onPressed: _cargarMas,
+                tooltip: 'Cargar más',
+                child: const Icon(Icons.add),
+              )
+              : null,
     );
   }
 }
