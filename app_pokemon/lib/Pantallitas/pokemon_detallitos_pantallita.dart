@@ -54,7 +54,18 @@ class _PokemonDetallitosPantallitaState
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text(widget.pokemon.nombre.toUpperCase())),
+      appBar: AppBar(
+        title: Text(widget.pokemon.nombre.toUpperCase()),
+        actions: [
+          IconButton(
+            icon: Icon(
+              _esFavorito ? Icons.favorite : Icons.favorite_border,
+              color: Colors.redAccent,
+            ),
+            onPressed: _alternarFavorito,
+          ),
+        ],
+      ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(24),
         child: Column(
