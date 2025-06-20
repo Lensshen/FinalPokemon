@@ -1,8 +1,10 @@
+import 'package:app_pokemon/Pantallitas/pokemon_clasificacion_pantallita.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'Pantallitas/pokemon_listita_pantallita.dart';
 import 'Pantallitas/favoritosGuardaditos_pantallita.dart';
 import 'Pantallitas/perfil_pantallita.dart';
+import 'Pantallitas/pokemon_clasificacion_pantallita.dart';
 
 class Menu extends StatefulWidget {
   const Menu({Key? key}) : super(key: key);
@@ -146,52 +148,7 @@ class _MenuState extends State<Menu> with SingleTickerProviderStateMixin {
           children: [
             const PokemonListitaPantallita(),
 
-            ListView(
-              padding: const EdgeInsets.all(12.0),
-              children: [
-                CustomCard(
-                  title: 'Pokemones Hielo',
-                  description: 'Favoritos de tipo Hielo',
-                  onPressed: () {
-                    _showSnackBar(
-                      context,
-                      'Tarjeta Hielo presionada',
-                      backgroundColor: Colors.lightBlue,
-                    );
-                  },
-                  icon: Icons.ac_unit,
-                  iconColor: Colors.lightBlue,
-                ),
-                const SizedBox(height: 12.0),
-                CustomCard(
-                  title: 'Pokemones Fuego',
-                  description: 'Favoritos de tipo Fuego',
-                  onPressed: () {
-                    _showSnackBar(
-                      context,
-                      'Tarjeta Fuego presionada',
-                      backgroundColor: Colors.orange,
-                    );
-                  },
-                  icon: Icons.local_fire_department,
-                  iconColor: Colors.orange,
-                ),
-                const SizedBox(height: 12.0),
-                CustomCard(
-                  title: 'Pokemones Agua',
-                  description: 'Favoritos de tipo Agua',
-                  onPressed: () {
-                    _showSnackBar(
-                      context,
-                      'Tarjeta Agua presionada',
-                      backgroundColor: Colors.blue,
-                    );
-                  },
-                  icon: Icons.water_drop,
-                  iconColor: Colors.blue,
-                ),
-              ],
-            ),
+            const PokemonClasificacionPantallita(),
 
             const FavoritosGuardaditosPantallita(),
 
