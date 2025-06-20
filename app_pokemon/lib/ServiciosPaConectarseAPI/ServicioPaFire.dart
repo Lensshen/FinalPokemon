@@ -7,6 +7,11 @@ class ServicioPaFire {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _db = FirebaseFirestore.instance;
 
+  Future<bool> usuarioExisteEnFirestore(String uid) async {
+    final doc = await _db.collection('usuarios').doc(uid).get();
+    return doc.exists;
+  }
+
   Future<void> agregarAFavoritos(PokemonModelito pokemon) async {
     try {
       final uid = _auth.currentUser?.uid;
@@ -83,5 +88,12 @@ class ServicioPaFire {
       'fotoUrl': _auth.currentUser?.photoURL,
       'uid': uid,
     }, SetOptions(merge: true));
+  }
+
+  Future<void> guardarPerfilCompleto(UsuarioModelito usuario) async {
+    await _db
+        .collection('usuarios')
+        .doc(usuario.uid)
+        .set(usuario.toMap(), SetOptions(merge: true));
   }
 }

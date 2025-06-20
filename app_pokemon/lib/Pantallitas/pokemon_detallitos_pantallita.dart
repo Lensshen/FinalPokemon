@@ -53,47 +53,41 @@ class _PokemonDetallitosPantallitaState
 
   @override
   Widget build(BuildContext context) {
-    final pokemon = widget.pokemon;
-
     return Scaffold(
-      appBar: AppBar(
-        title: Text(pokemon.nombre.toUpperCase()),
-        backgroundColor: Colors.deepPurple,
-        actions: [
-          IconButton(
-            icon: Icon(
-              _esFavorito ? Icons.favorite : Icons.favorite_border,
-              color: Colors.redAccent,
-            ),
-            onPressed: _alternarFavorito,
-          ),
-        ],
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(24.0),
+      appBar: AppBar(title: Text(widget.pokemon.nombre.toUpperCase())),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(24),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Image.network(pokemon.imagenUrl, height: 150),
+            Center(child: Image.network(widget.pokemon.imagenUrl, height: 150)),
+            const SizedBox(height: 16),
+            Center(
+              child: Wrap(
+                spacing: 8,
+                children:
+                    widget.pokemon.tipos
+                        .map((tipo) => TipoInsignia(tipo: tipo))
+                        .toList(),
+              ),
+            ),
             const SizedBox(height: 24),
-            Text(
-              pokemon.nombre.toUpperCase(),
-              style: const TextStyle(fontSize: 26, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 12),
-            Wrap(
-              spacing: 10,
-              children:
-                  pokemon.tipos
-                      .map((tipo) => TipoInsignia(tipo: tipo))
-                      .toList(),
-            ),
-            const SizedBox(height: 30),
+            Text("📏 Altura: ${widget.pokemon.altura / 10} m"),
+            Text("⚖️ Peso: ${widget.pokemon.peso / 10} kg"),
+            const SizedBox(height: 16),
             const Text(
-              'Pokemon macizo como JOH',
-              textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 16),
+              "📊 Estadísticas:",
+              style: TextStyle(fontWeight: FontWeight.bold),
             ),
+            ...widget.pokemon.stats.entries.map(
+              (e) => Text("${e.key}: ${e.value}"),
+            ),
+            const SizedBox(height: 16),
+            const Text(
+              "🎯 Movimientos principales:",
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
+            ...widget.pokemon.movimientos.take(5).map((mov) => Text("• $mov")),
           ],
         ),
       ),

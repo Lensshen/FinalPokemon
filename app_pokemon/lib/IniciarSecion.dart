@@ -2,6 +2,9 @@ import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'menu.dart';
+import 'Pantallitas/completar_perfil_pantallita.dart';
+import 'ServiciosPaConectarseAPI/ServicioPaFire.dart';
 
 class LoginScreen extends StatelessWidget {
   const LoginScreen({super.key});
@@ -33,13 +36,43 @@ class LoginScreen extends StatelessWidget {
       }
 
       final user = userCredential.user;
-      if (user != null) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text("Bienvenido, ${user.displayName}")),
+      if (user == null) {
+        print('❌ No se obtuvo el usuario de FirebaseAuth');
+        return;
+      }
+
+      print('✅ Usuario autenticado: ${user.uid} - ${user.email}');
+
+      // Verificar en Firestore
+      final yaExiste = await ServicioPaFire().usuarioExisteEnFirestore(
+        user.uid,
+      );
+      print('📦 ¿Usuario existe en Firestore? $yaExiste');
+
+      if (yaExiste) {
+        print('➡️ Navegando a Menu');
+        if (!context.mounted) return;
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (_) => const Menu()),
+        );
+      } else {
+        print('📝 Usuario nuevo. Navegando a CompletarPerfilPantallita');
+        if (!context.mounted) return;
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder:
+                (_) => CompletarPerfilPantallita(
+                  uid: user.uid,
+                  emailGoogle: user.email ?? '',
+                  fotoGoogle: user.photoURL ?? '',
+                ),
+          ),
         );
       }
     } catch (e) {
-      debugPrint("Error en Google Sign-In: $e");
+      print("🛑 Error en Google Sign-In: $e");
       ScaffoldMessenger.of(
         context,
       ).showSnackBar(SnackBar(content: Text("Error: ${e.toString()}")));
