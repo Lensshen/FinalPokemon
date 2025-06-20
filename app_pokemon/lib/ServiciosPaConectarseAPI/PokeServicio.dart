@@ -71,7 +71,7 @@ class PokeServicio {
     );
   }
 
-  
+
   Future<PokemonModelito?> buscar(String nombre) async {
     try {
       final url = Uri.parse('$_baseUrl/pokemon/$nombre');
@@ -122,5 +122,27 @@ class PokeServicio {
       print(' Error al buscar Pokémon por nombre: $e');
       return null;
     }
+  }
+
+  Future<List<PokemonModelito>> obtenerPorTipo(String tipo) async {
+    final url = Uri.parse('$_baseUrl/type/$tipo');
+    final response = await http.get(url);
+
+    if (response.statusCode != 200) {
+      throw Exception('Error al obtener Pokémon por tipo');
+    }
+
+    final data = json.decode(response.body);
+    final List pokemones = data['pokemon'];
+
+    final List<PokemonModelito> lista = [];
+
+    for (var entry in pokemones.take(20)) {
+      final pokemonUrl = entry['pokemon']['url'];
+      final detalle = await _obtenerDetallePokemon(pokemonUrl);
+      lista.add(detalle);
+    }
+
+    return lista;
   }
 }
