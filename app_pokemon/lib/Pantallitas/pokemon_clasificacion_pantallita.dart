@@ -94,8 +94,8 @@ class _PokemonClasificacionPantallitaState
                           const SliverGridDelegateWithFixedCrossAxisCount(
                             crossAxisCount: 3,
                             childAspectRatio: 1.50,
-                            mainAxisSpacing: 7,
-                            crossAxisSpacing: 7,
+                            mainAxisSpacing: 12,
+                            crossAxisSpacing: 12,
                           ),
                       itemBuilder:
                           (_, index) =>
