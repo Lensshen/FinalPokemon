@@ -8,7 +8,8 @@ class PokemonListitaPantallita extends StatefulWidget {
   const PokemonListitaPantallita({Key? key}) : super(key: key);
 
   @override
-  State<PokemonListitaPantallita> createState() => _PokemonListitaPantallitaState();
+  State<PokemonListitaPantallita> createState() =>
+      _PokemonListitaPantallitaState();
 }
 
 class _PokemonListitaPantallitaState extends State<PokemonListitaPantallita> {
@@ -25,7 +26,6 @@ class _PokemonListitaPantallitaState extends State<PokemonListitaPantallita> {
     _cargarPokemones();
     _searchController.addListener(_filtrar);
   }
-
 
   void _cargarPokemones() {
     _pokemonesFuture = PokeServicio().obtener().then((lista) {
@@ -45,9 +45,10 @@ class _PokemonListitaPantallitaState extends State<PokemonListitaPantallita> {
       return;
     }
 
-    final encontrados = _pokemones
-        .where((p) => p.nombre.toLowerCase().contains(query))
-        .toList();
+    final encontrados =
+        _pokemones
+            .where((p) => p.nombre.toLowerCase().contains(query))
+            .toList();
 
     if (encontrados.isNotEmpty) {
       setState(() {
@@ -57,7 +58,6 @@ class _PokemonListitaPantallitaState extends State<PokemonListitaPantallita> {
       setState(() {
         _cargandoDesdeApi = true;
       });
-
 
       final pokemonApi = await PokeServicio().buscar(query);
 
@@ -110,23 +110,25 @@ class _PokemonListitaPantallitaState extends State<PokemonListitaPantallita> {
               ),
             ),
             Expanded(
-              child: _cargandoDesdeApi
-                  ? const CargandoIndicator()
-                  : _filtrados.isEmpty
+              child:
+                  _cargandoDesdeApi
+                      ? const CargandoIndicator()
+                      : _filtrados.isEmpty
                       ? const Center(child: Text('No hay coincidencias.'))
                       : GridView.builder(
-                          padding: const EdgeInsets.symmetric(horizontal: 12),
-                          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: 3,
-                            crossAxisSpacing: 12,
-                            mainAxisSpacing: 12,
-                            childAspectRatio: 1.5,
-                          ),
-                          itemCount: _filtrados.length,
-                          itemBuilder: (context, index) {
-                            return PokemonCartita(pokemon: _filtrados[index]);
-                          },
-                        ),
+                        padding: const EdgeInsets.symmetric(horizontal: 12),
+                        gridDelegate:
+                            const SliverGridDelegateWithFixedCrossAxisCount(
+                              crossAxisCount: 3,
+                              crossAxisSpacing: 12,
+                              mainAxisSpacing: 12,
+                              childAspectRatio: 1.5,
+                            ),
+                        itemCount: _filtrados.length,
+                        itemBuilder: (context, index) {
+                          return PokemonCartita(pokemon: _filtrados[index]);
+                        },
+                      ),
             ),
           ],
         );

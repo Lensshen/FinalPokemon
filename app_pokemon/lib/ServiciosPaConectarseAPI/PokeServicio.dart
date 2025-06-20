@@ -3,57 +3,123 @@ import 'package:http/http.dart' as http;
 import '../modelitos/PokemonModelitos.dart';
 
 class PokeServicio {
-  final String baseUrl = 'https://pokeapi.co/api/v2';
+  final String _baseUrl = 'https://pokeapi.co/api/v2';
 
   Future<List<PokemonModelito>> obtener({int limite = 20}) async {
-    final url = Uri.parse('$baseUrl/pokemon?limit=$limite');
-    final respuesta = await http.get(url);
+    final url = Uri.parse('$_baseUrl/pokemon?limit=$limite');
+    final response = await http.get(url);
 
-    if (respuesta.statusCode != 200) {
-      throw Exception('Error al obtener la lista de Pokémon');
+    if (response.statusCode != 200) {
+      throw Exception('Error al cargar la lista de Pokémon');
     }
 
-    final data = jsonDecode(respuesta.body);
+    final data = json.decode(response.body);
     final List resultados = data['results'];
 
-    List<PokemonModelito> listaPokemon = [];
+    List<PokemonModelito> pokemones = [];
 
-    for (var resultado in resultados) {
-      final detalleUrl = Uri.parse(resultado['url']);
-      final respuestaDetalle = await http.get(detalleUrl);
-
-      if (respuestaDetalle.statusCode == 200) {
-        final detalleJson = jsonDecode(respuestaDetalle.body);
-        final pokemon = PokemonModelito.fromJson(resultado, detalleJson);
-        listaPokemon.add(pokemon);
-      }
+    for (var item in resultados) {
+      final detalle = await _obtenerDetallePokemon(item['url']);
+      pokemones.add(detalle);
     }
 
-    return listaPokemon;
+    return pokemones;
   }
 
-  /// buscar en api
+  Future<PokemonModelito> _obtenerDetallePokemon(String url) async {
+    final response = await http.get(Uri.parse(url));
+
+    if (response.statusCode != 200) {
+      throw Exception('Error al obtener detalles del Pokémon');
+    }
+
+    final data = json.decode(response.body);
+
+    final nombre = data['name'];
+    final imagenUrl =
+        data['sprites']['other']['official-artwork']['front_default'] ??
+        data['sprites']['front_default'];
+    final tipos =
+        (data['types'] as List)
+            .map((tipo) => tipo['type']['name'].toString())
+            .toList();
+
+    final peso = data['weight']; // en hectogramos
+    final altura = data['height']; // en decímetros
+
+    final movimientos =
+        (data['moves'] as List)
+            .take(5)
+            .map((m) => m['move']['name'].toString())
+            .toList();
+
+    final statsMap = <String, int>{};
+    for (var stat in data['stats']) {
+      final nombreStat = stat['stat']['name'];
+      final valor = stat['base_stat'];
+      statsMap[nombreStat] = valor;
+    }
+
+    return PokemonModelito(
+      nombre: nombre,
+      imagenUrl: imagenUrl,
+      tipos: tipos,
+      peso: peso,
+      altura: altura,
+      movimientos: movimientos,
+      stats: statsMap,
+    );
+  }
+
+  /// 🔍 Buscar un Pokémon por nombre
   Future<PokemonModelito?> buscar(String nombre) async {
     try {
-      final url = Uri.parse('$baseUrl/pokemon/$nombre');
-      final respuesta = await http.get(url);
+      final url = Uri.parse('$_baseUrl/pokemon/$nombre');
 
-      if (respuesta.statusCode == 200) {
-        final detalleJson = jsonDecode(respuesta.body);
+      final response = await http.get(url);
 
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
 
-        // resultado obtener
-        final resultado = {
-          'name': detalleJson['name'],
-          'url': '$baseUrl/pokemon/$nombre'
-        };
+        final nombre = data['name'];
+        final imagenUrl =
+            data['sprites']['other']['official-artwork']['front_default'] ??
+            data['sprites']['front_default'];
+        final tipos =
+            (data['types'] as List)
+                .map((tipo) => tipo['type']['name'].toString())
+                .toList();
 
-        return PokemonModelito.fromJson(resultado, detalleJson);
+        final peso = data['weight'];
+        final altura = data['height'];
+
+        final movimientos =
+            (data['moves'] as List)
+                .take(5)
+                .map((m) => m['move']['name'].toString())
+                .toList();
+
+        final statsMap = <String, int>{};
+        for (var stat in data['stats']) {
+          final nombreStat = stat['stat']['name'];
+          final valor = stat['base_stat'];
+          statsMap[nombreStat] = valor;
+        }
+
+        return PokemonModelito(
+          nombre: nombre,
+          imagenUrl: imagenUrl,
+          tipos: tipos,
+          peso: peso,
+          altura: altura,
+          movimientos: movimientos,
+          stats: statsMap,
+        );
       } else {
         return null;
       }
     } catch (e) {
-      print('Error al buscar Pokémon por nombre: $e');
+      print(' Error al buscar Pokémon por nombre: $e');
       return null;
     }
   }

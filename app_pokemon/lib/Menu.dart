@@ -26,7 +26,11 @@ class _MenuState extends State<Menu> with SingleTickerProviderStateMixin {
     super.dispose();
   }
 
-  void _showSnackBar(BuildContext context, String message, {Color backgroundColor = Colors.blue}) {
+  void _showSnackBar(
+    BuildContext context,
+    String message, {
+    Color backgroundColor = Colors.blue,
+  }) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(message),
@@ -71,7 +75,11 @@ class _MenuState extends State<Menu> with SingleTickerProviderStateMixin {
             IconButton(
               icon: const Icon(Icons.notifications),
               onPressed: () {
-                _showSnackBar(context, 'Notificaciones presionadas', backgroundColor: Colors.amber.shade700);
+                _showSnackBar(
+                  context,
+                  'Notificaciones presionadas',
+                  backgroundColor: Colors.amber.shade700,
+                );
               },
             ),
           ],
@@ -88,7 +96,10 @@ class _MenuState extends State<Menu> with SingleTickerProviderStateMixin {
                 ),
               ),
               ListTile(
-                leading: const Icon(Icons.catching_pokemon, color: Colors.yellow),
+                leading: const Icon(
+                  Icons.catching_pokemon,
+                  color: Colors.yellow,
+                ),
                 title: const Text("Inicio"),
                 onTap: () {
                   _tabController.animateTo(0);
@@ -133,7 +144,6 @@ class _MenuState extends State<Menu> with SingleTickerProviderStateMixin {
         body: TabBarView(
           controller: _tabController,
           children: [
-           
             const PokemonListitaPantallita(),
 
             ListView(
@@ -143,7 +153,11 @@ class _MenuState extends State<Menu> with SingleTickerProviderStateMixin {
                   title: 'Pokemones Hielo',
                   description: 'Favoritos de tipo Hielo',
                   onPressed: () {
-                    _showSnackBar(context, 'Tarjeta Hielo presionada', backgroundColor: Colors.lightBlue);
+                    _showSnackBar(
+                      context,
+                      'Tarjeta Hielo presionada',
+                      backgroundColor: Colors.lightBlue,
+                    );
                   },
                   icon: Icons.ac_unit,
                   iconColor: Colors.lightBlue,
@@ -153,7 +167,11 @@ class _MenuState extends State<Menu> with SingleTickerProviderStateMixin {
                   title: 'Pokemones Fuego',
                   description: 'Favoritos de tipo Fuego',
                   onPressed: () {
-                    _showSnackBar(context, 'Tarjeta Fuego presionada', backgroundColor: Colors.orange);
+                    _showSnackBar(
+                      context,
+                      'Tarjeta Fuego presionada',
+                      backgroundColor: Colors.orange,
+                    );
                   },
                   icon: Icons.local_fire_department,
                   iconColor: Colors.orange,
@@ -163,7 +181,11 @@ class _MenuState extends State<Menu> with SingleTickerProviderStateMixin {
                   title: 'Pokemones Agua',
                   description: 'Favoritos de tipo Agua',
                   onPressed: () {
-                    _showSnackBar(context, 'Tarjeta Agua presionada', backgroundColor: Colors.blue);
+                    _showSnackBar(
+                      context,
+                      'Tarjeta Agua presionada',
+                      backgroundColor: Colors.blue,
+                    );
                   },
                   icon: Icons.water_drop,
                   iconColor: Colors.blue,
@@ -177,11 +199,18 @@ class _MenuState extends State<Menu> with SingleTickerProviderStateMixin {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Text('Pantalla de Ajustes', style: TextStyle(fontSize: 24)),
+                  const Text(
+                    'Pantalla de Ajustes',
+                    style: TextStyle(fontSize: 24),
+                  ),
                   const SizedBox(height: 20),
                   ElevatedButton(
                     onPressed: () {
-                      _showSnackBar(context, 'Ajustes guardados', backgroundColor: Colors.green);
+                      _showSnackBar(
+                        context,
+                        'Ajustes guardados',
+                        backgroundColor: Colors.green,
+                      );
                     },
                     child: const Text('Guardar ajustes'),
                   ),
@@ -196,7 +225,6 @@ class _MenuState extends State<Menu> with SingleTickerProviderStateMixin {
               ),
             ),
 
-            
             const PerfilPantallita(),
           ],
         ),
@@ -204,7 +232,6 @@ class _MenuState extends State<Menu> with SingleTickerProviderStateMixin {
     );
   }
 }
-
 
 class CustomCard extends StatelessWidget {
   final String title;
@@ -237,7 +264,9 @@ class CustomCard extends StatelessWidget {
               width: double.infinity,
               decoration: BoxDecoration(
                 color: iconColor.withOpacity(0.2),
-                borderRadius: const BorderRadius.vertical(top: Radius.circular(10.0)),
+                borderRadius: const BorderRadius.vertical(
+                  top: Radius.circular(10.0),
+                ),
               ),
               alignment: Alignment.center,
               child: Icon(icon, size: 48, color: iconColor),
@@ -247,7 +276,13 @@ class CustomCard extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(title, style: const TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold)),
+                  Text(
+                    title,
+                    style: const TextStyle(
+                      fontSize: 16.0,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
                   const SizedBox(height: 6.0),
                   Text(description, style: const TextStyle(fontSize: 14.0)),
                 ],
