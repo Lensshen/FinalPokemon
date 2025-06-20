@@ -13,11 +13,13 @@ class PokemonListitaPantallita extends StatefulWidget {
 }
 
 class _PokemonListitaPantallitaState extends State<PokemonListitaPantallita> {
-  late Future<List<PokemonModelito>> _pokemonesFuture;
+  final _pokeServicio = PokeServicio();
+  final TextEditingController _searchController = TextEditingController();
+
   List<PokemonModelito> _pokemones = [];
   List<PokemonModelito> _filtrados = [];
-
-  final TextEditingController _searchController = TextEditingController();
+  int _limite = 10;
+  bool _cargando = true;
   bool _cargandoDesdeApi = false;
 
   @override
@@ -27,12 +29,21 @@ class _PokemonListitaPantallitaState extends State<PokemonListitaPantallita> {
     _searchController.addListener(_filtrar);
   }
 
-  void _cargarPokemones() {
-    _pokemonesFuture = PokeServicio().obtener().then((lista) {
-      _pokemones = lista;
-      _filtrados = lista;
-      return lista;
+  Future<void> _cargarPokemones() async {
+    setState(() => _cargando = true);
+    final nuevos = await _pokeServicio.obtener(limite: _limite);
+    setState(() {
+      _pokemones = nuevos;
+      _filtrados = nuevos;
+      _cargando = false;
     });
+  }
+
+  void _cargarMas() {
+    setState(() {
+      _limite += 10;
+    });
+    _cargarPokemones();
   }
 
   Future<void> _filtrar() async {
@@ -55,11 +66,9 @@ class _PokemonListitaPantallitaState extends State<PokemonListitaPantallita> {
         _filtrados = encontrados;
       });
     } else {
-      setState(() {
-        _cargandoDesdeApi = true;
-      });
+      setState(() => _cargandoDesdeApi = true);
 
-      final pokemonApi = await PokeServicio().buscar(query);
+      final pokemonApi = await _pokeServicio.buscar(query);
 
       setState(() {
         _cargandoDesdeApi = false;
@@ -80,59 +89,60 @@ class _PokemonListitaPantallitaState extends State<PokemonListitaPantallita> {
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<List<PokemonModelito>>(
-      future: _pokemonesFuture,
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const CargandoIndicator();
-        } else if (snapshot.hasError) {
-          return Center(child: Text('Error: ${snapshot.error}'));
-        } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-          return const Center(child: Text('No se encontraron Pokémon.'));
-        }
-
-        return Column(
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(12.0),
-              child: TextField(
-                controller: _searchController,
-                decoration: InputDecoration(
-                  hintText: 'Buscar Pokémon por nombre',
-                  prefixIcon: const Icon(Icons.search),
-                  filled: true,
-                  fillColor: Colors.white,
-                  contentPadding: const EdgeInsets.all(8),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                ),
-              ),
-            ),
-            Expanded(
-              child:
-                  _cargandoDesdeApi
-                      ? const CargandoIndicator()
-                      : _filtrados.isEmpty
-                      ? const Center(child: Text('No hay coincidencias.'))
-                      : GridView.builder(
-                        padding: const EdgeInsets.symmetric(horizontal: 12),
-                        gridDelegate:
-                            const SliverGridDelegateWithFixedCrossAxisCount(
-                              crossAxisCount: 3,
-                              crossAxisSpacing: 12,
-                              mainAxisSpacing: 12,
-                              childAspectRatio: 1.5,
-                            ),
-                        itemCount: _filtrados.length,
-                        itemBuilder: (context, index) {
-                          return PokemonCartita(pokemon: _filtrados[index]);
-                        },
+    return Scaffold(
+      body:
+          _cargando
+              ? const CargandoIndicator()
+              : Column(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(12.0),
+                    child: TextField(
+                      controller: _searchController,
+                      decoration: InputDecoration(
+                        hintText: 'Buscar Pokémon por nombre',
+                        prefixIcon: const Icon(Icons.search),
+                        filled: true,
+                        fillColor: Colors.white,
+                        contentPadding: const EdgeInsets.all(8),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
                       ),
-            ),
-          ],
-        );
-      },
+                    ),
+                  ),
+                  Expanded(
+                    child:
+                        _cargandoDesdeApi
+                            ? const CargandoIndicator()
+                            : _filtrados.isEmpty
+                            ? const Center(child: Text('No hay coincidencias.'))
+                            : GridView.builder(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 12,
+                              ),
+                              gridDelegate:
+                                  const SliverGridDelegateWithFixedCrossAxisCount(
+                                    crossAxisCount: 3,
+                                    crossAxisSpacing: 12,
+                                    mainAxisSpacing: 12,
+                                    childAspectRatio: 1.5,
+                                  ),
+                              itemCount: _filtrados.length,
+                              itemBuilder: (context, index) {
+                                return PokemonCartita(
+                                  pokemon: _filtrados[index],
+                                );
+                              },
+                            ),
+                  ),
+                ],
+              ),
+      floatingActionButton: FloatingActionButton.small(
+        onPressed: _cargarMas,
+        tooltip: 'Cargar más Pokémon',
+        child: const Icon(Icons.add),
+      ),
     );
   }
 }
