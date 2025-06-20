@@ -44,8 +44,8 @@ class PokeServicio {
             .map((tipo) => tipo['type']['name'].toString())
             .toList();
 
-    final peso = data['weight']; // en hectogramos
-    final altura = data['height']; // en decímetros
+    final peso = data['weight']; 
+    final altura = data['height']; 
 
     final movimientos =
         (data['moves'] as List)
@@ -71,7 +71,7 @@ class PokeServicio {
     );
   }
 
-  /// 🔍 Buscar un Pokémon por nombre
+  
   Future<PokemonModelito?> buscar(String nombre) async {
     try {
       final url = Uri.parse('$_baseUrl/pokemon/$nombre');
