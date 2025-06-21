@@ -136,7 +136,7 @@ class _PokemonDetallitosPantallitaState
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4.0, horizontal: 16),
       child: Row(
-        mainAxisSize: MainAxisSize.min, 
+        mainAxisSize: MainAxisSize.min,
         children: [
           SizedBox(
             width: 80,
@@ -178,6 +178,10 @@ class _PokemonDetallitosPantallitaState
     final tipoPrincipal = widget.pokemon.tipos.isNotEmpty
         ? widget.pokemon.tipos.first
         : 'normal';
+
+    // **MODIFICACIÓN CLAVE AQUÍ: Convertir altura y peso**
+    final double alturaEnMetros = widget.pokemon.altura / 10.0;
+    final double pesoEnKilogramos = widget.pokemon.peso / 10.0;
 
     return Scaffold(
       backgroundColor: _colorPorTipo(tipoPrincipal),
@@ -230,7 +234,8 @@ class _PokemonDetallitosPantallitaState
                 SizedBox(
                   width: double.infinity,
                   child: Text(
-                    "Altura: ${widget.pokemon.altura.toStringAsFixed(1)} m",
+                    // Usamos la variable convertida
+                    "Altura: ${alturaEnMetros.toStringAsFixed(1)} m",
                     style: const TextStyle(fontSize: 18),
                     textAlign: TextAlign.center,
                   ),
@@ -238,7 +243,8 @@ class _PokemonDetallitosPantallitaState
                 SizedBox(
                   width: double.infinity,
                   child: Text(
-                    "Peso: ${widget.pokemon.peso.toStringAsFixed(1)} kg",
+                    // Usamos la variable convertida
+                    "Peso: ${pesoEnKilogramos.toStringAsFixed(1)} kg",
                     style: const TextStyle(fontSize: 18),
                     textAlign: TextAlign.center,
                   ),
@@ -253,9 +259,8 @@ class _PokemonDetallitosPantallitaState
                   ),
                 ),
                 const SizedBox(height: 8),
-                
                 ...widget.pokemon.stats.entries.map(
-                  (e) => Center( 
+                  (e) => Center(
                     child: _buildStatBar(e.key.toUpperCase(), e.value),
                   ),
                 ),
