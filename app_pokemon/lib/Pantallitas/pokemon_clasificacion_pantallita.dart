@@ -53,9 +53,9 @@ class _PokemonClasificacionPantallitaState
   }
 
   void _cargarMas() {
-    final nuevoLimite = _cantidadVisible + 10;
     setState(() {
-      _cantidadVisible = nuevoLimite;
+      final disponibles = _todosDelTipo.length;
+      _cantidadVisible = (_cantidadVisible + 10).clamp(0, disponibles);
       _visibles = _todosDelTipo.take(_cantidadVisible).toList();
     });
   }
