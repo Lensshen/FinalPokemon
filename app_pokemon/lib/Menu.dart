@@ -4,7 +4,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'Pantallitas/pokemon_listita_pantallita.dart';
 import 'Pantallitas/favoritosGuardaditos_pantallita.dart';
 import 'Pantallitas/perfil_pantallita.dart';
-import 'Pantallitas/pokemon_clasificacion_pantallita.dart';
 
 class Menu extends StatefulWidget {
   const Menu({Key? key}) : super(key: key);
