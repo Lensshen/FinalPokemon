@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
-import 'package:flutter/animation.dart';
 import '../modelitos/PokemonModelitos.dart';
 import '../widgets/tipo_insignias.dart';
 import '../ServiciosPaConectarseAPI/ServicioPaFire.dart';
@@ -121,6 +120,59 @@ class _PokemonDetallitosPantallitaState
     }
   }
 
+  Widget _buildStatBar(String label, int value, {int max = 150}) {
+    final double porcentaje = (value / max).clamp(0.0, 1.0);
+    Color color;
+    if (value >= 120) {
+      color = Colors.green.shade600;
+    } else if (value >= 80) {
+      color = Colors.lightGreen;
+    } else if (value >= 50) {
+      color = Colors.amber;
+    } else {
+      color = Colors.redAccent;
+    }
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4.0, horizontal: 16),
+      child: Row(
+        mainAxisSize: MainAxisSize.min, 
+        children: [
+          SizedBox(
+            width: 80,
+            child: Text(label, style: const TextStyle(fontWeight: FontWeight.bold)),
+          ),
+          SizedBox(
+            width: MediaQuery.of(context).size.width * 0.4,
+            child: Stack(
+              children: [
+                Container(
+                  height: 14,
+                  decoration: BoxDecoration(
+                    color: Colors.grey.shade300,
+                    borderRadius: BorderRadius.circular(6),
+                  ),
+                ),
+                FractionallySizedBox(
+                  widthFactor: porcentaje,
+                  child: Container(
+                    height: 14,
+                    decoration: BoxDecoration(
+                      color: color,
+                      borderRadius: BorderRadius.circular(6),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(width: 8),
+          Text('$value'),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final tipoPrincipal = widget.pokemon.tipos.isNotEmpty
@@ -151,57 +203,83 @@ class _PokemonDetallitosPantallitaState
           position: _slideAnimation,
           child: SingleChildScrollView(
             padding: const EdgeInsets.all(24),
-            child: Center(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Container(
-                    decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.3),
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    padding: const EdgeInsets.all(16),
-                    child: Column(
-                      children: [
-                        Image.network(widget.pokemon.imagenUrl, height: 180),
-                        const SizedBox(height: 16),
-                        Wrap(
-                          spacing: 8,
-                          alignment: WrapAlignment.center,
-                          children: widget.pokemon.tipos
-                              .map((tipo) => TipoInsignia(tipo: tipo))
-                              .toList(),
-                        ),
-                      ],
-                    ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Container(
+                  decoration: BoxDecoration(
+                    color: Colors.white.withOpacity(0.3),
+                    borderRadius: BorderRadius.circular(20),
                   ),
-                  const SizedBox(height: 32),
-                  Text(" Altura: ${widget.pokemon.altura / 10} m",
-                      style: const TextStyle(fontSize: 18)),
-                  Text(" Peso: ${widget.pokemon.peso / 10} kg",
-                      style: const TextStyle(fontSize: 18)),
-                  const SizedBox(height: 24),
-                  const Text(
-                    " Estadísticas:",
+                  padding: const EdgeInsets.all(16),
+                  child: Column(
+                    children: [
+                      Image.network(widget.pokemon.imagenUrl, height: 180),
+                      const SizedBox(height: 16),
+                      Wrap(
+                        spacing: 8,
+                        alignment: WrapAlignment.center,
+                        children: widget.pokemon.tipos
+                            .map((tipo) => TipoInsignia(tipo: tipo))
+                            .toList(),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 32),
+                SizedBox(
+                  width: double.infinity,
+                  child: Text(
+                    "Altura: ${widget.pokemon.altura.toStringAsFixed(1)} m",
+                    style: const TextStyle(fontSize: 18),
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+                SizedBox(
+                  width: double.infinity,
+                  child: Text(
+                    "Peso: ${widget.pokemon.peso.toStringAsFixed(1)} kg",
+                    style: const TextStyle(fontSize: 18),
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+                const SizedBox(height: 24),
+                SizedBox(
+                  width: double.infinity,
+                  child: const Text(
+                    "Estadísticas:",
                     style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+                    textAlign: TextAlign.center,
                   ),
-                  const SizedBox(height: 8),
-                  ...widget.pokemon.stats.entries.map(
-                    (e) => Text("${e.key.toUpperCase()}: ${e.value}",
-                        style: const TextStyle(fontSize: 16)),
+                ),
+                const SizedBox(height: 8),
+                
+                ...widget.pokemon.stats.entries.map(
+                  (e) => Center( 
+                    child: _buildStatBar(e.key.toUpperCase(), e.value),
                   ),
-                  const SizedBox(height: 24),
-                  const Text(
-                    " Movimientos principales:",
+                ),
+                const SizedBox(height: 24),
+                SizedBox(
+                  width: double.infinity,
+                  child: const Text(
+                    "Movimientos principales:",
                     style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+                    textAlign: TextAlign.center,
                   ),
-                  const SizedBox(height: 8),
-                  ...widget.pokemon.movimientos
-                      .take(5)
-                      .map((mov) => Text("• $mov",
-                          style: const TextStyle(fontSize: 16))),
-                ],
-              ),
+                ),
+                const SizedBox(height: 8),
+                ...widget.pokemon.movimientos
+                    .take(5)
+                    .map((mov) => SizedBox(
+                          width: double.infinity,
+                          child: Text(
+                            "• $mov",
+                            style: const TextStyle(fontSize: 16),
+                            textAlign: TextAlign.center,
+                          ),
+                        )),
+              ],
             ),
           ),
         ),
@@ -209,4 +287,3 @@ class _PokemonDetallitosPantallitaState
     );
   }
 }
-

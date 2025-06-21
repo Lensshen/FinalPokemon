@@ -60,6 +60,57 @@ class _PokemonClasificacionPantallitaState
     });
   }
 
+  Widget _buildStatBar(String label, int value, {int max = 150}) {
+    final double porcentaje = (value / max).clamp(0.0, 1.0);
+    Color color;
+    if (value >= 120) {
+      color = Colors.green.shade600;
+    } else if (value >= 80) {
+      color = Colors.lightGreen;
+    } else if (value >= 50) {
+      color = Colors.amber;
+    } else {
+      color = Colors.redAccent;
+    }
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4.0, horizontal: 16),
+      child: Row(
+        children: [
+          SizedBox(
+            width: 80,
+            child: Text(label, style: const TextStyle(fontWeight: FontWeight.bold)),
+          ),
+          Expanded(
+            child: Stack(
+              children: [
+                Container(
+                  height: 14,
+                  decoration: BoxDecoration(
+                    color: Colors.grey.shade300,
+                    borderRadius: BorderRadius.circular(6),
+                  ),
+                ),
+                FractionallySizedBox(
+                  widthFactor: porcentaje,
+                  child: Container(
+                    height: 14,
+                    decoration: BoxDecoration(
+                      color: color,
+                      borderRadius: BorderRadius.circular(6),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(width: 8),
+          Text('$value'),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -69,49 +120,46 @@ class _PokemonClasificacionPantallitaState
             scrollDirection: Axis.horizontal,
             padding: const EdgeInsets.all(8),
             child: Row(
-              children:
-                  tipos.map((tipo) {
-                    final esSeleccionado = tipo == _tipoSeleccionado;
-                    return Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 4),
-                      child: ChoiceChip(
-                        label: Text(tipo.toUpperCase()),
-                        selected: esSeleccionado,
-                        onSelected: (_) => _cargarPorTipo(tipo),
-                      ),
-                    );
-                  }).toList(),
+              children: tipos.map((tipo) {
+                final esSeleccionado = tipo == _tipoSeleccionado;
+                return Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 4),
+                  child: ChoiceChip(
+                    label: Text(tipo.toUpperCase()),
+                    selected: esSeleccionado,
+                    onSelected: (_) => _cargarPorTipo(tipo),
+                  ),
+                );
+              }).toList(),
             ),
           ),
           Expanded(
-            child:
-                _cargando
-                    ? const Center(child: CircularProgressIndicator())
-                    : GridView.builder(
-                      padding: const EdgeInsets.all(8),
-                      itemCount: _visibles.length,
-                      gridDelegate:
-                          const SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: 3,
-                            childAspectRatio: 1.50,
-                            mainAxisSpacing: 12,
-                            crossAxisSpacing: 12,
-                          ),
-                      itemBuilder:
-                          (_, index) =>
-                              PokemonCartita(pokemon: _visibles[index]),
+            child: _cargando
+                ? const Center(child: CircularProgressIndicator())
+                : GridView.builder(
+                    padding: const EdgeInsets.all(8),
+                    itemCount: _visibles.length,
+                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 3,
+                      childAspectRatio: 1.50,
+                      mainAxisSpacing: 12,
+                      crossAxisSpacing: 12,
                     ),
+                    itemBuilder: (_, index) {
+                      final pokemon = _visibles[index];
+                      return PokemonCartita(pokemon: pokemon);
+                    },
+                  ),
           ),
         ],
       ),
-      floatingActionButton:
-          (!_cargando && _visibles.length < _todosDelTipo.length)
-              ? FloatingActionButton.small(
-                onPressed: _cargarMas,
-                tooltip: 'Cargar más',
-                child: const Icon(Icons.add),
-              )
-              : null,
+      floatingActionButton: (!_cargando && _visibles.length < _todosDelTipo.length)
+          ? FloatingActionButton.small(
+              onPressed: _cargarMas,
+              tooltip: 'Cargar más',
+              child: const Icon(Icons.add),
+            )
+          : null,
     );
   }
 }

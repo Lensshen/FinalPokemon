@@ -87,7 +87,7 @@ class _PokemonCartitaState extends State<PokemonCartita> {
                 children: [
                   Image.network(
                     widget.pokemon.imagenUrl,
-                    height: 100,
+                    height: 200,
                     fit: BoxFit.cover,
                   ),
                   IconButton(
