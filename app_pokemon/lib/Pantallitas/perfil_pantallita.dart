@@ -66,7 +66,7 @@ class _PerfilPantallitaState extends State<PerfilPantallita> {
                 validator:
                     (value) =>
                         value == null || value.isEmpty
-                            ? 'El nombre no puede estar vacío'
+                            ? 'El nombre no puede estar vacÃo'
                             : null,
               ),
               const SizedBox(height: 20),

@@ -4,6 +4,8 @@ import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 import 'IniciarSecion.dart';
 import 'Menu.dart';
+import 'Pantallitas/completar_perfil_pantallita.dart';
+import 'ServiciosPaConectarseAPI/ServicioPaFire.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -17,7 +19,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Coneccion de autenticacion con menu',
+      title: 'Conexión de autenticación con menú',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(primarySwatch: Colors.blue),
       home: StreamBuilder<User?>(
@@ -27,11 +29,37 @@ class MyApp extends StatelessWidget {
             return const Scaffold(
               body: Center(child: CircularProgressIndicator()),
             );
-          } else if (snapshot.hasData) {
-            return const Menu();
-          } else {
-            return const LoginScreen();
           }
+
+          if (snapshot.hasData) {
+            final user = snapshot.data!;
+
+            // Verificar si el usuario ya está en Firestore
+            return FutureBuilder<bool>(
+              future: ServicioPaFire().usuarioExisteEnFirestore(user.uid),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Scaffold(
+                    body: Center(child: CircularProgressIndicator()),
+                  );
+                }
+
+                if (snapshot.hasError || !(snapshot.data ?? false)) {
+                  // Usuario no existe: ir a completar perfil
+                  return CompletarPerfilPantallita(
+                    uid: user.uid,
+                    emailGoogle: user.email ?? '',
+                    fotoGoogle: user.photoURL ?? '',
+                  );
+                }
+
+                // Usuario ya registrado: ir al menú
+                return const Menu();
+              },
+            );
+          }
+
+          return const LoginScreen(); // No hay sesión activa
         },
       ),
     );
