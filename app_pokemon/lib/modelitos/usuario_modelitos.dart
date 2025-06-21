@@ -12,7 +12,7 @@ class UsuarioModelito {
 
   factory UsuarioModelito.fromMap(Map<String, dynamic> map) {
     return UsuarioModelito(
-      uid: map['uid'],
+      uid: map['uid'] ?? '',
       nombre: map['nombre'],
       email: map['email'],
       fotoUrl: map['fotoUrl'],

@@ -13,44 +13,135 @@ class PokemonListitaPantallita extends StatefulWidget {
 }
 
 class _PokemonListitaPantallitaState extends State<PokemonListitaPantallita> {
-  late Future<List<PokemonModelito>> _pokemones;
+  final _pokeServicio = PokeServicio();
+  final TextEditingController _searchController = TextEditingController();
+
+  List<PokemonModelito> _pokemones = [];
+  List<PokemonModelito> _filtrados = [];
+  int _limite = 10;
+  bool _cargando = true;
+  bool _cargandoDesdeApi = false;
 
   @override
   void initState() {
     super.initState();
-    _pokemones = PokeServicio().obtenerPokemones();
+    _cargarPokemones();
+    _searchController.addListener(_filtrar);
+  }
+
+  Future<void> _cargarPokemones() async {
+    setState(() => _cargando = true);
+    final nuevos = await _pokeServicio.obtener(limite: _limite);
+    setState(() {
+      _pokemones = nuevos;
+      _filtrados = nuevos;
+      _cargando = false;
+    });
+  }
+
+  void _cargarMas() {
+    setState(() {
+      _limite += 10;
+    });
+    _cargarPokemones();
+  }
+
+  Future<void> _filtrar() async {
+    final query = _searchController.text.toLowerCase();
+
+    if (query.isEmpty) {
+      setState(() {
+        _filtrados = _pokemones;
+      });
+      return;
+    }
+
+    final encontrados =
+        _pokemones
+            .where((p) => p.nombre.toLowerCase().contains(query))
+            .toList();
+
+    if (encontrados.isNotEmpty) {
+      setState(() {
+        _filtrados = encontrados;
+      });
+    } else {
+      setState(() => _cargandoDesdeApi = true);
+
+      final pokemonApi = await _pokeServicio.buscar(query);
+
+      setState(() {
+        _cargandoDesdeApi = false;
+        if (pokemonApi != null) {
+          _filtrados = [pokemonApi];
+        } else {
+          _filtrados = [];
+        }
+      });
+    }
+  }
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Lista de Pokémon')),
-      body: FutureBuilder<List<PokemonModelito>>(
-        future: _pokemones,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const CargandoIndicator();
-          } else if (snapshot.hasError) {
-            return Center(child: Text('Error: ${snapshot.error}'));
-          } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-            return const Center(child: Text('No se encontraron Pokémon.'));
-          } else {
-            final lista = snapshot.data!;
-            return GridView.builder(
-              padding: const EdgeInsets.all(12),
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,
-                crossAxisSpacing: 12,
-                mainAxisSpacing: 12,
-                childAspectRatio: 0.9,
+      body:
+          _cargando
+              ? const CargandoIndicator()
+              : Column(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(12.0),
+                    child: TextField(
+                      controller: _searchController,
+                      decoration: InputDecoration(
+                        hintText: 'Buscar Pokémon por nombre',
+                        prefixIcon: const Icon(Icons.search),
+                        filled: true,
+                        fillColor: Colors.white,
+                        contentPadding: const EdgeInsets.all(8),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                    ),
+                  ),
+                  Expanded(
+                    child:
+                        _cargandoDesdeApi
+                            ? const CargandoIndicator()
+                            : _filtrados.isEmpty
+                            ? const Center(child: Text('No hay coincidencias.'))
+                            : GridView.builder(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 12,
+                              ),
+                              gridDelegate:
+                                  const SliverGridDelegateWithFixedCrossAxisCount(
+                                    crossAxisCount: 3,
+                                    crossAxisSpacing: 12,
+                                    mainAxisSpacing: 12,
+                                    childAspectRatio: 1.5,
+                                  ),
+                              itemCount: _filtrados.length,
+                              itemBuilder: (context, index) {
+                                return PokemonCartita(
+                                  pokemon: _filtrados[index],
+                                );
+                              },
+                            ),
+                  ),
+                ],
               ),
-              itemCount: lista.length,
-              itemBuilder: (context, index) {
-                return PokemonCartita(pokemon: lista[index]);
-              },
-            );
-          }
-        },
+      floatingActionButton: FloatingActionButton.small(
+        onPressed: _cargarMas,
+        tooltip: 'Cargar más Pokémon',
+        child: const Icon(Icons.add),
       ),
     );
   }
