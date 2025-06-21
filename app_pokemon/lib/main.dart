@@ -34,7 +34,7 @@ class MyApp extends StatelessWidget {
           if (snapshot.hasData) {
             final user = snapshot.data!;
 
-            // Verificar si el usuario ya está en Firestore
+            
             return FutureBuilder<bool>(
               future: ServicioPaFire().usuarioExisteEnFirestore(user.uid),
               builder: (context, snapshot) {
@@ -45,7 +45,7 @@ class MyApp extends StatelessWidget {
                 }
 
                 if (snapshot.hasError || !(snapshot.data ?? false)) {
-                  // Usuario no existe: ir a completar perfil
+                 
                   return CompletarPerfilPantallita(
                     uid: user.uid,
                     emailGoogle: user.email ?? '',
@@ -53,13 +53,13 @@ class MyApp extends StatelessWidget {
                   );
                 }
 
-                // Usuario ya registrado: ir al menú
+              
                 return const Menu();
               },
             );
           }
 
-          return const LoginScreen(); // No hay sesión activa
+          return const LoginScreen(); 
         },
       ),
     );

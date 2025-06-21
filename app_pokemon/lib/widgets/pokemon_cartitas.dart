@@ -81,23 +81,23 @@ class _PokemonCartitaState extends State<PokemonCartita> {
           padding: const EdgeInsets.all(8),
           child: Column(
             mainAxisSize:
-                MainAxisSize.min, // IMPORTANTE: Esto evita que se expanda
+                MainAxisSize.min, 
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              // Usar Flexible para la imagen
+              
               Flexible(
-                flex: 3, // Dale más espacio a la imagen
+                flex: 3, 
                 child: Stack(
                   alignment: Alignment.topRight,
                   children: [
                     Container(
                       width: double.infinity,
                       constraints: BoxConstraints(
-                        maxHeight: 140, // Máximo 140px de altura
+                        maxHeight: 140, 
                       ),
                       child: Image.network(
                         widget.pokemon.imagenUrl,
-                        fit: BoxFit.contain, // Cambiado de cover a contain
+                        fit: BoxFit.contain, 
                         errorBuilder: (context, error, stackTrace) {
                           return Container(
                             height: 100,
@@ -117,31 +117,30 @@ class _PokemonCartitaState extends State<PokemonCartita> {
                         icon: Icon(
                           _esFavorito ? Icons.favorite : Icons.favorite_border,
                           color: Colors.redAccent,
-                          size: 20, // Icono más pequeño
+                          size: 20, 
                         ),
                         onPressed: _alternarFavorito,
-                        padding: EdgeInsets.all(4), // Menos padding
+                        padding: EdgeInsets.all(4), 
                       ),
                     ),
                   ],
                 ),
               ),
-              const SizedBox(height: 6), // Menos espacio
-              // Usar Flexible para el texto del nombre
+              const SizedBox(height: 6), 
               Flexible(
                 child: Text(
                   widget.pokemon.nombre.toUpperCase(),
                   style: const TextStyle(
                     fontWeight: FontWeight.bold,
-                    fontSize: 12, // Texto más pequeño
+                    fontSize: 12, 
                   ),
                   textAlign: TextAlign.center,
-                  maxLines: 2, // Máximo 2 líneas
+                  maxLines: 2, 
                   overflow: TextOverflow.ellipsis,
                 ),
               ),
               const SizedBox(height: 4),
-              // Usar Flexible para los badges de tipos
+              
               Flexible(
                 child: SingleChildScrollView(
                   scrollDirection: Axis.horizontal,

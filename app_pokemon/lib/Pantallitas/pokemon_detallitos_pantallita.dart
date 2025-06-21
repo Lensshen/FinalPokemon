@@ -179,7 +179,7 @@ class _PokemonDetallitosPantallitaState
         ? widget.pokemon.tipos.first
         : 'normal';
 
-    // **MODIFICACIÓN CLAVE AQUÍ: Convertir altura y peso**
+    
     final double alturaEnMetros = widget.pokemon.altura / 10.0;
     final double pesoEnKilogramos = widget.pokemon.peso / 10.0;
 
@@ -234,7 +234,7 @@ class _PokemonDetallitosPantallitaState
                 SizedBox(
                   width: double.infinity,
                   child: Text(
-                    // Usamos la variable convertida
+                    
                     "Altura: ${alturaEnMetros.toStringAsFixed(1)} m",
                     style: const TextStyle(fontSize: 18),
                     textAlign: TextAlign.center,
@@ -243,7 +243,7 @@ class _PokemonDetallitosPantallitaState
                 SizedBox(
                   width: double.infinity,
                   child: Text(
-                    // Usamos la variable convertida
+                   
                     "Peso: ${pesoEnKilogramos.toStringAsFixed(1)} kg",
                     style: const TextStyle(fontSize: 18),
                     textAlign: TextAlign.center,
