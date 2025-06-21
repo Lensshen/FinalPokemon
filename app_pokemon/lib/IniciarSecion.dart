@@ -43,7 +43,6 @@ class LoginScreen extends StatelessWidget {
 
       print(' Usuario autenticado: ${user.uid} - ${user.email}');
 
-     
       final yaExiste = await ServicioPaFire().usuarioExisteEnFirestore(
         user.uid,
       );
@@ -62,12 +61,11 @@ class LoginScreen extends StatelessWidget {
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
-            builder:
-                (_) => CompletarPerfilPantallita(
-                    uid: user.uid,
-                    emailGoogle: user.email ?? '',
-                    fotoGoogle: user.photoURL ?? '',
-                  ),
+            builder: (_) => CompletarPerfilPantallita(
+              uid: user.uid,
+              emailGoogle: user.email ?? '',
+              fotoGoogle: user.photoURL ?? '',
+            ),
           ),
         );
       }
@@ -82,87 +80,85 @@ class LoginScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
-        decoration: BoxDecoration(
-          image: DecorationImage(
-            
-            image: AssetImage('assets/imagenes/mapa.png'), 
-            fit: BoxFit.cover, 
-           
-            filterQuality: FilterQuality.high, 
-            
-            
-          ),
-        ),
-        child: Center(
-          child: Padding(
-            padding: const EdgeInsets.all(24.0),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                
-                Image.asset(
-                  'assets/imagenes/logo.png',
-                  height: 150,
-                ),
-                const SizedBox(height: 40),
-                
-                const Text(
-                  '¡Bienvenido Entrenador!',
-                  style: TextStyle(
-                    fontSize: 30,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
-                    shadows: [
-                      Shadow(
-                        blurRadius: 5.0,
-                        color: Colors.black,
-                        offset: Offset(2.0, 2.0),
-                      ),
-                    ],
-                  ),
-                ),
-                const SizedBox(height: 10),
-                const Text(
-                  'Inicia sesión para comenzar tu aventura Pokemon.',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: 16,
-                    color: Colors.white70,
-                    shadows: [
-                      Shadow(
-                        blurRadius: 3.0,
-                        color: Colors.black,
-                        offset: Offset(1.0, 1.0),
-                      ),
-                    ],
-                  ),
-                ),
-                const SizedBox(height: 30),
-                
-                ElevatedButton.icon(
-                  icon: const Icon(Icons.login, color: Colors.white),
-                  label: const Text(
-                    "Iniciar con Google",
-                    style: TextStyle(color: Colors.white),
-                  ),
-                  onPressed: () => _signInWithGoogle(context),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.red.shade700,
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 30,
-                      vertical: 15,
-                    ),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    elevation: 5,
-                  ),
-                ),
-              ],
+      body: Stack(
+        fit: StackFit.expand,
+        children: [
+          Transform.scale(
+            scale: 1.5, 
+            child: Image.asset(
+              'assets/imagenes/mapa.png',
+              fit: BoxFit.contain,
+              alignment: Alignment.topCenter,
+              filterQuality: FilterQuality.high,
             ),
           ),
-        ),
+          Center(
+            child: Padding(
+              padding: const EdgeInsets.all(24.0),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Image.asset(
+                    'assets/imagenes/logo.png',
+                    height: 150,
+                  ),
+                  const SizedBox(height: 40),
+                  const Text(
+                    '¡Bienvenido Entrenador!',
+                    style: TextStyle(
+                      fontSize: 30,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                      shadows: [
+                        Shadow(
+                          blurRadius: 5.0,
+                          color: Colors.black,
+                          offset: Offset(2.0, 2.0),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  const Text(
+                    'Inicia sesión para comenzar tu aventura Pokemon.',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: 16,
+                      color: Colors.white70,
+                      shadows: [
+                        Shadow(
+                          blurRadius: 3.0,
+                          color: Colors.black,
+                          offset: Offset(1.0, 1.0),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 30),
+                  ElevatedButton.icon(
+                    icon: const Icon(Icons.login, color: Colors.white),
+                    label: const Text(
+                      "Iniciar con Google",
+                      style: TextStyle(color: Colors.white),
+                    ),
+                    onPressed: () => _signInWithGoogle(context),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.red.shade700,
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 30,
+                        vertical: 15,
+                      ),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      elevation: 5,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
