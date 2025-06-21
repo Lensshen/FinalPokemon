@@ -44,8 +44,8 @@ class PokeServicio {
             .map((tipo) => tipo['type']['name'].toString())
             .toList();
 
-    final peso = data['weight']; // en hectogramos
-    final altura = data['height']; // en decímetros
+    final peso = data['weight'];
+    final altura = data['height'];
 
     final movimientos =
         (data['moves'] as List)
@@ -71,7 +71,6 @@ class PokeServicio {
     );
   }
 
-  /// 🔍 Buscar un Pokémon por nombre
   Future<PokemonModelito?> buscar(String nombre) async {
     try {
       final url = Uri.parse('$_baseUrl/pokemon/$nombre');
@@ -119,7 +118,7 @@ class PokeServicio {
         return null;
       }
     } catch (e) {
-      print('❌ Error al buscar Pokémon por nombre: $e');
+      print(' Error al buscar Pokémon por nombre: $e');
       return null;
     }
   }
@@ -135,12 +134,20 @@ class PokeServicio {
     final data = json.decode(response.body);
     final List pokemones = data['pokemon'];
 
-    final List<PokemonModelito> lista = [];
+    List<PokemonModelito> lista = [];
 
-    for (var entry in pokemones.take(20)) {
-      final pokemonUrl = entry['pokemon']['url'];
-      final detalle = await _obtenerDetallePokemon(pokemonUrl);
-      lista.add(detalle);
+    for (var entry in pokemones) {
+      final pokemonData = entry['pokemon'];
+      if (pokemonData == null || pokemonData['url'] == null) continue;
+
+      final pokemonUrl = pokemonData['url'] as String;
+      try {
+        final detalle = await _obtenerDetallePokemon(pokemonUrl);
+        lista.add(detalle);
+      } catch (e) {
+        print('⚠️ Error al obtener detalles del Pokémon: $e');
+        continue;
+      }
     }
 
     return lista;

@@ -53,11 +53,65 @@ class _PokemonClasificacionPantallitaState
   }
 
   void _cargarMas() {
+    final nuevoLimite = _cantidadVisible + 10;
     setState(() {
-      final disponibles = _todosDelTipo.length;
-      _cantidadVisible = (_cantidadVisible + 10).clamp(0, disponibles);
+      _cantidadVisible = nuevoLimite;
       _visibles = _todosDelTipo.take(_cantidadVisible).toList();
     });
+  }
+
+  Widget _buildStatBar(String label, int value, {int max = 150}) {
+    final double porcentaje = (value / max).clamp(0.0, 1.0);
+    Color color;
+    if (value >= 120) {
+      color = Colors.green.shade600;
+    } else if (value >= 80) {
+      color = Colors.lightGreen;
+    } else if (value >= 50) {
+      color = Colors.amber;
+    } else {
+      color = Colors.redAccent;
+    }
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4.0, horizontal: 16),
+      child: Row(
+        children: [
+          SizedBox(
+            width: 80,
+            child: Text(
+              label,
+              style: const TextStyle(fontWeight: FontWeight.bold),
+            ),
+          ),
+          Expanded(
+            child: Stack(
+              children: [
+                Container(
+                  height: 14,
+                  decoration: BoxDecoration(
+                    color: Colors.grey.shade300,
+                    borderRadius: BorderRadius.circular(6),
+                  ),
+                ),
+                FractionallySizedBox(
+                  widthFactor: porcentaje,
+                  child: Container(
+                    height: 14,
+                    decoration: BoxDecoration(
+                      color: color,
+                      borderRadius: BorderRadius.circular(6),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(width: 8),
+          Text('$value'),
+        ],
+      ),
+    );
   }
 
   @override
@@ -92,14 +146,15 @@ class _PokemonClasificacionPantallitaState
                       itemCount: _visibles.length,
                       gridDelegate:
                           const SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: 2,
-                            childAspectRatio: 1,
-                            mainAxisSpacing: 8,
-                            crossAxisSpacing: 8,
+                            crossAxisCount: 3,
+                            childAspectRatio: 1.50,
+                            mainAxisSpacing: 12,
+                            crossAxisSpacing: 12,
                           ),
-                      itemBuilder:
-                          (_, index) =>
-                              PokemonCartita(pokemon: _visibles[index]),
+                      itemBuilder: (_, index) {
+                        final pokemon = _visibles[index];
+                        return PokemonCartita(pokemon: pokemon);
+                      },
                     ),
           ),
         ],
@@ -108,7 +163,7 @@ class _PokemonClasificacionPantallitaState
           (!_cargando && _visibles.length < _todosDelTipo.length)
               ? FloatingActionButton.small(
                 onPressed: _cargarMas,
-                tooltip: 'Cargar más',
+                tooltip: 'Cargar mas',
                 child: const Icon(Icons.add),
               )
               : null,

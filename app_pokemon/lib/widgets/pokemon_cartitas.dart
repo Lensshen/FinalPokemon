@@ -80,37 +80,86 @@ class _PokemonCartitaState extends State<PokemonCartita> {
         child: Padding(
           padding: const EdgeInsets.all(8),
           child: Column(
+            mainAxisSize:
+                MainAxisSize.min, // IMPORTANTE: Esto evita que se expanda
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Stack(
-                alignment: Alignment.topRight,
-                children: [
-                  Image.network(
-                    widget.pokemon.imagenUrl,
-                    height: 100,
-                    fit: BoxFit.cover,
-                  ),
-                  IconButton(
-                    icon: Icon(
-                      _esFavorito ? Icons.favorite : Icons.favorite_border,
-                      color: Colors.redAccent,
+              // Usar Flexible para la imagen
+              Flexible(
+                flex: 3, // Dale más espacio a la imagen
+                child: Stack(
+                  alignment: Alignment.topRight,
+                  children: [
+                    Container(
+                      width: double.infinity,
+                      constraints: BoxConstraints(
+                        maxHeight: 140, // Máximo 140px de altura
+                      ),
+                      child: Image.network(
+                        widget.pokemon.imagenUrl,
+                        fit: BoxFit.contain, // Cambiado de cover a contain
+                        errorBuilder: (context, error, stackTrace) {
+                          return Container(
+                            height: 100,
+                            child: Icon(
+                              Icons.catching_pokemon,
+                              size: 50,
+                              color: Colors.grey,
+                            ),
+                          );
+                        },
+                      ),
                     ),
-                    onPressed: _alternarFavorito,
-                  ),
-                ],
+                    Positioned(
+                      top: -8,
+                      right: -8,
+                      child: IconButton(
+                        icon: Icon(
+                          _esFavorito ? Icons.favorite : Icons.favorite_border,
+                          color: Colors.redAccent,
+                          size: 20, // Icono más pequeño
+                        ),
+                        onPressed: _alternarFavorito,
+                        padding: EdgeInsets.all(4), // Menos padding
+                      ),
+                    ),
+                  ],
+                ),
               ),
-              const SizedBox(height: 8),
-              Text(
-                widget.pokemon.nombre.toUpperCase(),
-                style: const TextStyle(fontWeight: FontWeight.bold),
+              const SizedBox(height: 6), // Menos espacio
+              // Usar Flexible para el texto del nombre
+              Flexible(
+                child: Text(
+                  widget.pokemon.nombre.toUpperCase(),
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 12, // Texto más pequeño
+                  ),
+                  textAlign: TextAlign.center,
+                  maxLines: 2, // Máximo 2 líneas
+                  overflow: TextOverflow.ellipsis,
+                ),
               ),
               const SizedBox(height: 4),
-              Wrap(
-                spacing: 6,
-                children:
-                    widget.pokemon.tipos
-                        .map((tipo) => TipoInsignia(tipo: tipo))
-                        .toList(),
+              // Usar Flexible para los badges de tipos
+              Flexible(
+                child: SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children:
+                        widget.pokemon.tipos
+                            .map(
+                              (tipo) => Padding(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 2,
+                                ),
+                                child: TipoInsignia(tipo: tipo),
+                              ),
+                            )
+                            .toList(),
+                  ),
+                ),
               ),
             ],
           ),

@@ -53,10 +53,10 @@ class _FavoritosGuardaditosPantallitaState
           child: GridView.builder(
             padding: const EdgeInsets.all(12),
             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 3,
+              crossAxisCount: 3, 
               crossAxisSpacing: 12,
               mainAxisSpacing: 12,
-              childAspectRatio: 1.50,
+              childAspectRatio: 1.50, 
             ),
             itemCount: lista.length,
             itemBuilder: (context, index) {
